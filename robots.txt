@@ -1,0 +1,4 @@
+Sitemap: https://tristan.bruge.re/sitemapindex.xml
+
+User-Agent: *
+Host: tristan.bruge.re

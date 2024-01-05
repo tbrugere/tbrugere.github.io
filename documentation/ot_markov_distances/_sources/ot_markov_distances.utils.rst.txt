@@ -1,0 +1,7 @@
+ot\_markov\_distances.utils module
+==================================
+
+.. automodule:: ot_markov_distances.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

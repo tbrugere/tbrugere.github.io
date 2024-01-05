@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ot_markov_distances.utils module &mdash; ot_markov_distances  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ot_markov_distances.wl module" href="ot_markov_distances.wl.html" />
+    <link rel="prev" title="ot_markov_distances.sinkhorn module" href="ot_markov_distances.sinkhorn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ot_markov_distances
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to ot_markov_distances’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notes_gradient.html">Notes on Gradient computation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ot_markov_distances.html">ot_markov_distances package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ot_markov_distances.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ot_markov_distances.discounted_wl.html">ot_markov_distances.discounted_wl module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ot_markov_distances.sinkhorn.html">ot_markov_distances.sinkhorn module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ot_markov_distances.utils module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.weighted_transition_matrix"><code class="docutils literal notranslate"><span class="pre">weighted_transition_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.markov_measure"><code class="docutils literal notranslate"><span class="pre">markov_measure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.double_last_dimension"><code class="docutils literal notranslate"><span class="pre">double_last_dimension()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.draw_markov"><code class="docutils literal notranslate"><span class="pre">draw_markov()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.degree_markov"><code class="docutils literal notranslate"><span class="pre">degree_markov()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.densify"><code class="docutils literal notranslate"><span class="pre">densify()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.dummy_densify"><code class="docutils literal notranslate"><span class="pre">dummy_densify()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.cost_matrix_index"><code class="docutils literal notranslate"><span class="pre">cost_matrix_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.reindex_cost_matrix"><code class="docutils literal notranslate"><span class="pre">reindex_cost_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.re_project_C"><code class="docutils literal notranslate"><span class="pre">re_project_C()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.pad_one_markov_to"><code class="docutils literal notranslate"><span class="pre">pad_one_markov_to()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.pad_markovs"><code class="docutils literal notranslate"><span class="pre">pad_markovs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ot_markov_distances.wl.html">ot_markov_distances.wl module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ot_markov_distances.html#module-ot_markov_distances">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ot_markov_distances</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="ot_markov_distances.html">ot_markov_distances package</a></li>
+      <li class="breadcrumb-item active">ot_markov_distances.utils module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ot_markov_distances.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-ot_markov_distances.utils">
+<span id="ot-markov-distances-utils-module"></span><h1>ot_markov_distances.utils module<a class="headerlink" href="#module-ot_markov_distances.utils" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.utils.weighted_transition_matrix">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">weighted_transition_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ot_markov_distances.utils.weighted_transition_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Create a LMMC from a Graph</p>
+<p>This function is largely inspired from the same one here
+<a class="reference external" href="https://github.com/chens5/WL-distance/blob/main/utils/utils.py">https://github.com/chens5/WL-distance/blob/main/utils/utils.py</a></p>
+<p>See def 5 in <span id="id1">Chen <em>et al.</em> [<a class="reference internal" href="index.html#id4" title="Samantha Chen, Sunhyuk Lim, Facundo Mémoli, Zhengchao Wan, and Yusu Wang. Weisfeiler-Lehman meets Gromov-Wasserstein. In International Conference on Machine Learning (ICML), 3371-3416. PMLR, 2022.">CLM+22</a>]</span>,</p>
+<p>It returns the transition matrix of the random walk on graph G,
+where the probability of staying in the same node is q,
+and the probablity of transiting to one of the neighboring nodes
+is equiprobable</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G</strong> – the graph</p></li>
+<li><p><strong>q</strong> – the q parameter for the q-markov chain</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Array</strong> – weighted transition matrix associated to q-random walks on G</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.utils.markov_measure">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">markov_measure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#ot_markov_distances.utils.markov_measure" title="Permalink to this definition"></a></dt>
+<dd><p>Takes a (batched) markov transition matrix,
+and outputs its stationary distribution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>M</strong> – (*b, n, n) the markov transition matrix</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Tensor</strong> – m (*b, n)  so that m &#64; b  = m</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.utils.double_last_dimension">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">double_last_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#ot_markov_distances.utils.double_last_dimension" title="Permalink to this definition"></a></dt>
+<dd><p>doubles last dimension of a tensor, by making it into a diagonal matrix
+:param t: (…, d)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>t’</strong> (<em>…, d, d</em>) – <cite>t’[…, i, i] = t[…, i]</cite> and
+<cite>t’[…, i, k] = 0 if i != k</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.utils.draw_markov">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">draw_markov</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ot_markov_distances.utils.draw_markov" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.utils.degree_markov">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">degree_markov</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#ot_markov_distances.utils.degree_markov" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.utils.densify">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">densify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FloatTensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ot_markov_distances.utils.densify" title="Permalink to this definition"></a></dt>
+<dd><p>make a sparse markov matrix into a dense one</p>
+<p>Takes a (batched) markov matrix <cite>m</cite> where every transition is very sparse.</p>
+<p>Call :math:<a href="#id2"><span class="problematic" id="id3">`</span></a>d := max_i(deg(m_i)) = max_i #{j, m_{ij} neq 0 } `
+(maxmized over the batch)</p>
+<p>Assume d is low (so every one of the <span class="math notranslate nohighlight">\(m_i\)</span> is sparse)</p>
+<p>call, for <span class="math notranslate nohighlight">\(0 \leq i &lt; [n]\)</span>,
+<span class="math notranslate nohighlight">\(\text{index}_{i, 0} \ldots \text{index}_{i, d-1}\)</span>
+the indices where <span class="math notranslate nohighlight">\(m_i\)</span> is nonzero, in increasing order
+(eventually 0-padded if there are less than d)</p>
+<p>this gives us an <cite>index</cite> array of size <cite>(*batch, n, d)</cite></p>
+<p>call also <cite>index_mask</cite> the mask of size <cite>(*batch, n, d)</cite> corresponding to
+the 0-padding we did on <cite>index</cite> (so <cite>index_mask[*b, i, j] = True</cite>
+if <cite>index[*b, i, j]</cite> is an actual index, False if it’s just padding)</p>
+<p>Finally, call <cite>m_dense</cite> so that</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}m_dense[*b, i, j] = \begin{cases}
+    m[*b, i, index[*b, i, j]]  \text{ if } index_mask[*b, i, j] \\
+    0 \text{ otherwise }
+\end{cases}\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>m</strong> – <cite>(*batch, n, n)</cite> input markov matrix</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>m_indices</strong> – <cite>(*batch, n, d)</cite>, LongTensor</p></li>
+<li><p><strong>m_indices_mask</strong> – <cite>(*batch, n, d)</cite>, BoolTensor</p></li>
+<li><p><strong>m_dense</strong> – <a href="#id4"><span class="problematic" id="id5">`</span></a>(<a href="#id6"><span class="problematic" id="id7">*</span></a>batch, ), Floattensor</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.utils.dummy_densify">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">dummy_densify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FloatTensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.LongTensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.BoolTensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.FloatTensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ot_markov_distances.utils.dummy_densify" title="Permalink to this definition"></a></dt>
+<dd><p>Same as densify, but returns dummy results:
+the densified matrix is the full matrix,
+the index is simply (1, 2, …, n)
+and the mask is all true</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.utils.cost_matrix_index">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">cost_matrix_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mx_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">my_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mx_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">my_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ot_markov_distances.utils.cost_matrix_index" title="Permalink to this definition"></a></dt>
+<dd><p>reindex the cost matrix to go with densified distributions</p>
+<p>takes the indices mx_index and my_index output by densify, as well as a cost matrix,
+and reindexes the cost matrix to go with the densified distributions.</p>
+<p>More precisely, if</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">mx_index,</span> <span class="pre">mx_mask,</span> <span class="pre">mx_dense</span> <span class="pre">=</span>&#160; <span class="pre">densify(mx)</span>
+<span class="pre">my_index,</span> <span class="pre">my_mask,</span> <span class="pre">my_dense</span> <span class="pre">=</span>&#160; <span class="pre">densify(my)</span>
+<span class="pre">C_index,</span> <span class="pre">C_mask</span> <span class="pre">=</span> <span class="pre">cost_matrix_index(mx_index,</span> <span class="pre">my_index,</span> <span class="pre">mx_mask,</span> <span class="pre">my_mask)</span>
+<span class="pre">C_dense</span> <span class="pre">=</span> <span class="pre">C.view(-1)[C_index]</span>
+<span class="pre">`</span></code></p>
+<p>then</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">sinkhorn(mx_dense[:,</span> <span class="pre">:,</span> <span class="pre">None,</span> <span class="pre">:],</span> <span class="pre">my_dense[:,</span> <span class="pre">None,</span> <span class="pre">:,</span> <span class="pre">:],</span> <span class="pre">C_dense,</span> <span class="pre">epsilon)</span> <span class="pre">==</span>&#160; <span class="pre">sinkhorn(mx[:,</span> <span class="pre">:,</span> <span class="pre">None,</span> <span class="pre">:],</span> <span class="pre">my[:,</span> <span class="pre">None,</span> <span class="pre">:,</span> <span class="pre">:],</span> <span class="pre">C[:,</span> <span class="pre">None,</span> <span class="pre">None,</span> <span class="pre">:,</span> <span class="pre">:])</span>
+<span class="pre">`</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mx_index</strong> – <cite>(*batch, n, dx)</cite>, LongTensor</p></li>
+<li><p><strong>my_index</strong> – <cite>(*batch, m, dy)</cite>, LongTensor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>C_index</strong></p></li>
+<li><p><strong>C_mask</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.utils.reindex_cost_matrix">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">reindex_cost_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_mask</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ot_markov_distances.utils.reindex_cost_matrix" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.utils.re_project_C">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">re_project_C</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C_dense</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FloatTensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LongTensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BoolTensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ot_markov_distances.utils.re_project_C" title="Permalink to this definition"></a></dt>
+<dd><p>Inverse of reindex_cost_matrix</p>
+<p>Takes a (b, n, m, dx, dy) reindexed cost matrix (or matching matrix)
+and outputs a (b, n, m, n, m) cost matrix C_sparse
+where C_sparse[b, i, j, mx_index[b, i, j, k], my_index[b, i, j, l]]</p>
+<blockquote>
+<div><p>= C_dense[b, i, j, k, l]</p>
+</div></blockquote>
+<p>And the rest are filled with zeros</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>C_dense</strong> – (b, n, m, dx, dy)</p></li>
+<li><p><strong>C_index</strong> – (b, n, m, dx, dy)</p></li>
+<li><p><strong>C_mask</strong> – (b, n, m, dx, dy)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.utils.pad_one_markov_to">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">pad_one_markov_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ot_markov_distances.utils.pad_one_markov_to" title="Permalink to this definition"></a></dt>
+<dd><p>Pad a markov chain to n states</p>
+<p>Pads a markov chain to n states by adding
+(n - m) states with zero distribution mass, and transitions to themselves wp 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>M</strong> – (m, m) transition matrix</p></li>
+<li><p><strong>mu</strong> – <ol class="loweralpha simple" start="13">
+<li><p>distribution</p></li>
+</ol>
+</p></li>
+<li><p><strong>n</strong> – the number of states to pad to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.utils.pad_markovs">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">pad_markovs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transition_matrices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distributions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ot_markov_distances.utils.pad_markovs" title="Permalink to this definition"></a></dt>
+<dd><p>Pad markov chains to the same number of states</p>
+<p>Pads markov chains to the same number of states by adding
+states with zero distribution mass, and transitions to themselves wp 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transition_matrices</strong> – list of  transition matrices (of shape (m_i, m_i))</p></li>
+<li><p><strong>distributions</strong> – list of distributions (of shape (m_i))</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ot_markov_distances.sinkhorn.html" class="btn btn-neutral float-left" title="ot_markov_distances.sinkhorn module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ot_markov_distances.wl.html" class="btn btn-neutral float-right" title="ot_markov_distances.wl module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

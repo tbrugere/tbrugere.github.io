@@ -1,0 +1,58 @@
+
+ul.yamlcv {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display:grid;
+    grid-template-columns: minmax(min-content, max-content) repeat(4, auto);
+    column-gap: 10px;
+}
+li.yamlcv {
+    display: grid;
+    grid-template-columns:subgrid;
+    grid-column-start: 1;
+    grid-column-end: 5;
+    row-gap: 0.5em;
+    
+}
+li.yamlcv div.yamlcv-item {
+    display: grid;
+    grid-template-columns:subgrid;
+    grid-column-start: 1;
+    grid-column-end: 5;
+}
+
+li.yamlcv div .yamlcv-date {
+    grid-column: 1;
+}
+
+li.yamlcv div .yamlcv-content {
+    grid-column: 2;
+    display: inline
+}
+
+
+/* li.yamlcv div .yamlcv-content :not(:last-child) { */
+/*     margin-right: 1em; */
+/* } */
+/*  */
+li.yamlcv > .yamlcv-item > .yamlcv-content :not(:first-child)::before {
+    content: " — ";
+    color: lightgrey;
+}
+
+li.yamlcv > div.yamlcv-item.yamlcv-tag-competence::before {
+    content: "•";
+    color: black;
+    grid-column: 1;
+    width: content-fit;
+}
+
+
+.yamlcv-what {
+    font-weight: bold;
+}
+
+.yamlcv-precision {
+    font-style: italic;
+}

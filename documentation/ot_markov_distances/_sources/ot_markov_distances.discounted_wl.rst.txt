@@ -1,0 +1,7 @@
+ot\_markov\_distances.discounted\_wl module
+===========================================
+
+.. automodule:: ot_markov_distances.discounted_wl
+   :members:
+   :undoc-members:
+   :show-inheritance:

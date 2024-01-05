@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ot_markov_distances.sinkhorn module &mdash; ot_markov_distances  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ot_markov_distances.utils module" href="ot_markov_distances.utils.html" />
+    <link rel="prev" title="ot_markov_distances.discounted_wl module" href="ot_markov_distances.discounted_wl.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ot_markov_distances
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to ot_markov_distances’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notes_gradient.html">Notes on Gradient computation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ot_markov_distances.html">ot_markov_distances package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="ot_markov_distances.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ot_markov_distances.discounted_wl.html">ot_markov_distances.discounted_wl module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ot_markov_distances.sinkhorn module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.sinkhorn.sinkhorn_internal"><code class="docutils literal notranslate"><span class="pre">sinkhorn_internal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.sinkhorn.Sinkhorn"><code class="docutils literal notranslate"><span class="pre">Sinkhorn</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.sinkhorn.sinkhorn"><code class="docutils literal notranslate"><span class="pre">sinkhorn()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ot_markov_distances.utils.html">ot_markov_distances.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ot_markov_distances.wl.html">ot_markov_distances.wl module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ot_markov_distances.html#module-ot_markov_distances">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ot_markov_distances</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="ot_markov_distances.html">ot_markov_distances package</a></li>
+      <li class="breadcrumb-item active">ot_markov_distances.sinkhorn module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ot_markov_distances.sinkhorn.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-ot_markov_distances.sinkhorn">
+<span id="ot-markov-distances-sinkhorn-module"></span><h1>ot_markov_distances.sinkhorn module<a class="headerlink" href="#module-ot_markov_distances.sinkhorn" title="Permalink to this heading"></a></h1>
+<p>Differentiable sinkhorn divergence.
+This module provides a pytorch/autograd compatible implementation of sinkhorn
+divergence,
+using the method described in <span id="id1">[<a class="reference internal" href="index.html#id26" title="Jean Feydy, Thibault Séjourné, François-Xavier Vialard, Shun-ichi Amari, Alain Trouvé, and Gabriel Peyré. Interpolating between optimal transport and mmd using sinkhorn divergences. In The 22nd International Conference on Artificial Intelligence and Statistics, 2681–2690. PMLR, 2019.">FSejourneV+19</a>]</span></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.sinkhorn.sinkhorn_internal">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.sinkhorn.</span></span><span class="sig-name descname"><span class="pre">sinkhorn_internal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_convergence_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv_atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv_rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_has_converged</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="k"><span class="pre">False</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ot_markov_distances.sinkhorn.sinkhorn_internal" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.sinkhorn.</span></span><span class="sig-name descname"><span class="pre">sinkhorn_internal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_convergence_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv_atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv_rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_has_converged</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="k"><span class="pre">True</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<dd><p>Same as sinkhorn, but returns f, g and P instead of the result
+Beware, this function does not have the shortcut differentiation</p>
+<p>(It can still be differentiated by autograd though)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – (*batch, n) vector of the first distribution</p></li>
+<li><p><strong>b</strong> – (*batch, m) vector of the second distribtion</p></li>
+<li><p><strong>C</strong> – (*batch, n, m) cost matrix</p></li>
+<li><p><strong>epsilon</strong> – regularisation term for sinkhorn</p></li>
+<li><p><strong>k</strong> – max number of sinkhorn iterations (default 100)</p></li>
+<li><p><strong>check_convergence_interval</strong> – if int, check for convergence every
+<code class="docutils literal notranslate"><span class="pre">check_convergence_interval</span></code>.
+If float, check for convergence every <code class="docutils literal notranslate"><span class="pre">check_convergence_interval</span> <span class="pre">*</span> <span class="pre">k</span></code>.
+If 0, never check for convergence
+(apart from the last iteration if <code class="docutils literal notranslate"><span class="pre">return_has_converged==True</span></code>)
+If convergence is reached early, the algorithm returns.</p></li>
+<li><p><strong>cv_atol</strong> – absolute and relative tolerance for the converegence criterion</p></li>
+<li><p><strong>cv_rtol</strong> – absolute and relative tolerance for the converegence criterion</p></li>
+<li><p><strong>return_has_converged</strong> – whether to return a boolean indicating whether the
+algorithm has converged. Setting this to True means that the  function
+will always check for convergence at the last iteration
+(regardless of the value of <code class="docutils literal notranslate"><span class="pre">check_convergence_interval</span></code>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>f</strong> – Tensor (*batch, n)</p></li>
+<li><p><strong>g</strong> – Tensor (*batch, m)</p></li>
+<li><p><strong>log_P</strong> – Tensor (*batch, n, m)</p></li>
+<li><p><strong>has_converged</strong> – bool only returened if <code class="docutils literal notranslate"><span class="pre">return_has_converged</span></code> is True.
+Indicates whether the algorithm has converged</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ot_markov_distances.sinkhorn.Sinkhorn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ot_markov_distances.sinkhorn.</span></span><span class="sig-name descname"><span class="pre">Sinkhorn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ot_markov_distances.sinkhorn.Sinkhorn" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Function</span></code></p>
+<p>Computes Sinkhorn divergence</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ot_markov_distances.sinkhorn.Sinkhorn.forward">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_convergence_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv_atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv_rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_has_converged</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="k"><span class="pre">True</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">False</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ot_markov_distances.sinkhorn.Sinkhorn.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Batched version of sinkhorn distance</p>
+<p>It is computed as in [&#64;feydyInterpolatingOptimalTransport2019, Property 1]</p>
+<p>The 3 batch dims will be broadcast to each other.
+Every steps is only broadcasted torch operations,
+so it should be reasonably fast on gpu</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – (*batch, n) First distribution.</p></li>
+<li><p><strong>b</strong> – (*batch, m) Second distribution</p></li>
+<li><p><strong>C</strong> – (*batch, n, m) Cost matrix</p></li>
+<li><p><strong>epsilon</strong> – Regularization parameter</p></li>
+<li><p><strong>k</strong> – max number of sinkhorn iterations (default 100)</p></li>
+<li><p><strong>check_convergence_interval</strong> – if int, check for convergence every
+<code class="docutils literal notranslate"><span class="pre">check_convergence_interval</span></code>.
+If float, check for convergence every <code class="docutils literal notranslate"><span class="pre">check_convergence_interval</span> <span class="pre">*</span> <span class="pre">k</span></code>.
+If 0, never check for convergence
+(apart from the last iteration if <code class="docutils literal notranslate"><span class="pre">return_has_converged==True</span></code>)
+If convergence is reached early, the algorithm returns.</p></li>
+<li><p><strong>cv_atol</strong> – absolute and relative tolerance for the converegence criterion</p></li>
+<li><p><strong>cv_rtol</strong> – absolute and relative tolerance for the converegence criterion</p></li>
+<li><p><strong>return_has_converged</strong> – whether to return a boolean indicating whether the
+algorithm has converged. Setting this to True means that the  function
+will always check for convergence at the last iteration
+(regardless of the value of <code class="docutils literal notranslate"><span class="pre">check_convergence_interval</span></code>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>divergence</strong> – (*batch) <span class="math notranslate nohighlight">\(\text{divergence}[*i] = OT^\epsilon(a[*i], b[*i], C[*i])\)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ot_markov_distances.sinkhorn.Sinkhorn.backward">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_output</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ot_markov_distances.sinkhorn.Sinkhorn.backward" title="Permalink to this definition"></a></dt>
+<dd><p>We use the fact that the primal solution <span class="math notranslate nohighlight">\(P\)</span>
+and the dual solutions <span class="math notranslate nohighlight">\(f, g\)</span>
+are the gradients for respectively the cost matrix <span class="math notranslate nohighlight">\(C\)</span>,
+and the input distributions <span class="math notranslate nohighlight">\(\mu_x\)</span> and <span class="math notranslate nohighlight">\(\mu_y\)</span>
+<span id="id2">[<a class="reference internal" href="index.html#id22" title="Gabriel Peyré, Marco Cuturi, and others. Computational optimal transport: with applications to data science. Foundations and Trends® in Machine Learning, 11(5-6):355–607, 2019.">PeyreC+19</a>]</span></p>
+<p>This allows us to shortcut the backward pass.
+Note that <span id="id3">Peyré <em>et al.</em> [<a class="reference internal" href="index.html#id22" title="Gabriel Peyré, Marco Cuturi, and others. Computational optimal transport: with applications to data science. Foundations and Trends® in Machine Learning, 11(5-6):355–607, 2019.">PeyreC+19</a>]</span> discourage doing this
+if the sinkhorn iterations do not converge</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ot_markov_distances.sinkhorn.sinkhorn">
+<span class="sig-prename descclassname"><span class="pre">ot_markov_distances.sinkhorn.</span></span><span class="sig-name descname"><span class="pre">sinkhorn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_convergence_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv_atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv_rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_has_converged</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="k"><span class="pre">True</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">False</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#ot_markov_distances.sinkhorn.sinkhorn" title="Permalink to this definition"></a></dt>
+<dd><p>Differentiable sinkhorn distance</p>
+<p>This is a pytorch implementation of sinkhorn,
+batched (over <code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span></code> and <code class="docutils literal notranslate"><span class="pre">C</span></code>)</p>
+<p>It is compatible with pytorch autograd gradient computations.</p>
+<p>See the documentation of <a class="reference internal" href="#ot_markov_distances.sinkhorn.Sinkhorn" title="ot_markov_distances.sinkhorn.Sinkhorn"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sinkhorn</span></code></a> for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> – (*batch, n) vector of the first distribution</p></li>
+<li><p><strong>b</strong> – (*batch, m) vector of the second distribtion</p></li>
+<li><p><strong>C</strong> – (*batch, n, m) cost matrix</p></li>
+<li><p><strong>epsilon</strong> – regularisation term for sinkhorn</p></li>
+<li><p><strong>max_iter</strong> – max number of sinkhorn iterations (default 100)</p></li>
+<li><p><strong>check_convergence_interval</strong> – if int, check for convergence every
+<code class="docutils literal notranslate"><span class="pre">check_convergence_interval</span></code>.
+If float, check for convergence every <code class="docutils literal notranslate"><span class="pre">check_convergence_interval</span> <span class="pre">*</span> <span class="pre">max_iter</span></code>.
+If 0, never check for convergence
+(apart from the last iteration if <code class="docutils literal notranslate"><span class="pre">return_has_converged==True</span></code>)
+If convergence is reached early, the algorithm returns.</p></li>
+<li><p><strong>cv_atol</strong> – absolute and relative tolerance for the converegence criterion</p></li>
+<li><p><strong>cv_rtol</strong> – absolute and relative tolerance for the converegence criterion</p></li>
+<li><p><strong>return_has_converged</strong> – whether to return a boolean indicating whether the
+algorithm has converged. Setting this to True means that the  function
+will always check for convergence at the last iteration
+(regardless of the value of <code class="docutils literal notranslate"><span class="pre">check_convergence_interval</span></code>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Tensor</strong> – (*batch). result of the sinkhorn computation</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ot_markov_distances.discounted_wl.html" class="btn btn-neutral float-left" title="ot_markov_distances.discounted_wl module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ot_markov_distances.utils.html" class="btn btn-neutral float-right" title="ot_markov_distances.utils module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

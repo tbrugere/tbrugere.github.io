@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notes on Gradient computation &mdash; ot_markov_distances  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ot_markov_distances package" href="ot_markov_distances.html" />
+    <link rel="prev" title="Welcome to ot_markov_distances’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ot_markov_distances
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to ot_markov_distances’s documentation!</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Notes on Gradient computation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ot_markov_distances.html">ot_markov_distances package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ot_markov_distances</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Notes on Gradient computation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/notes_gradient.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="notes-on-gradient-computation">
+<h1>Notes on Gradient computation<a class="headerlink" href="#notes-on-gradient-computation" title="Permalink to this heading"></a></h1>
+<p>We compute the gradient using the technique described in <span id="id1">Brugère <em>et al.</em> [<a class="reference internal" href="index.html#id3" title="Tristan Brugère, Zhengchao Wan, and Yusu Wang. Distances for markov chains, and their differentiation. 2023. arXiv:2302.08621.">BWW23</a>]</span>.</p>
+<p>But we push the formulae a little further to simplify the computation:</p>
+<p>Remark that , with the notations of the paper,
+denoting</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather}
+K = I_{nm} - (1 - \delta)P\\
+\Delta := \left(\Delta_{ij}^{kl}\right){}_{1 \leq i \leq n, 1 \leq j \leq m }^{ 1 \leq k \leq n, 1 \leq l \leq m}, \,
+\Gamma := \left(\Gamma_{ij}^{kk'}\right){}_{1 \leq i \leq n, 1 \leq j \leq m }^{ 1 \leq k \leq n, 1 \leq k' \leq n},
+\Theta := \left(\Theta_{ij}^{ll'}\right){}_{1 \leq i \leq n, 1 \leq j \leq m }^{ 1 \leq l \leq m, 1 \leq l' \leq m},  \\
+\text{where}~~~
+\Delta_{ij}^{kl} := \frac{\partial C^{\epsilon,\delta, (\infty)}_{ij}}{\partial C_{kl}}, \,
+\Gamma_{ij}^{kk'} := \frac{\partial C^{\epsilon,\delta, (\infty)}_{ij}}{\partial m^{\setX}_{kk'}}, \,
+\Theta_{ij}^{ll'} := \frac{\partial C^{\epsilon,\delta, (\infty)}_{ij}}{\partial m^{\setY}_{ll'}}.\\
+\end{gather}\end{split}\]</div>
+<p>and denoting also</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather}
+G^O_{ij} := \frac{\partial \text{loss}}{\partial C^{\epsilon,\delta, (\infty)}_{ij}}\\
+G^C_{kl} := \frac{\partial \text{loss}}{\partial C_{kl}}, \\
+G^X_{kk'} := \frac{\partial \text{loss}}{\partial m^{\setX}_{kk'}}\\
+G^Y_{ll'} := \frac{\partial \text{loss}}{\partial m^{\setY}_{ll'}}\\
+\end{gather}\end{split}\]</div>
+<p>Then (in matrix notation, ie with dimensions/codims flattened together)</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather}
+G^C = \Delta^T G^O\\
+G^X = \Gamma^T G^O\\
+G^Y = \Theta^T G^O\\
+\end{gather}\end{split}\]</div>
+<p>Developing</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{gather}
+G^C = \delta (K^T)^{-1} G^O\\
+G^X = (1-\delta) F^T (K^T)^{-1} G^O\\
+G^Y = (1-\delta) G^T (K^T)^{-1} G^O\\
+\end{gather}\end{split}\]</div>
+<p>Thus we save some compute by applying above formulae,
+and computing <span class="math notranslate nohighlight">\((K^T)^{-1} G^O\)</span> only once.</p>
+<p>Note also that <span class="math notranslate nohighlight">\((K^T)^{-1} G^O\)</span> can be computed with <cite>torch.solve</cite>
+instead of <cite>torch.inv</cite> for more efficiency and stability</p>
+<p>We call this matrix <code class="docutils literal notranslate"><span class="pre">K_Tm1_grad</span></code> in the implementation</p>
+<p>Note also that <span class="math notranslate nohighlight">\(F\)</span> and <span class="math notranslate nohighlight">\(G\)</span> do not need to be explicitly computed:
+denote by <span class="math notranslate nohighlight">\(L := (K^T)^{-1} G^O\)</span>,
+then</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}G^X_{kk'} &amp;= (F^T L)_{kk'} \\
+&amp;= (F^{T})_{kk'}^{ij} L_{ij} \\
+&amp;= F^{kk'}_{ij} L_{ij} \\
+&amp;= f^{k'}_{ij}\1_{i=k} L_{ij} \\
+&amp;= f^{k'}_{kj} L{kj} \\\end{split}\]</div>
+<p>And similarly for <span class="math notranslate nohighlight">\(G^Y\)</span></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to ot_markov_distances’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ot_markov_distances.html" class="btn btn-neutral float-right" title="ot_markov_distances package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

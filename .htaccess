@@ -1,0 +1,9 @@
+Options -Indexes
+# php_flag engine off
+
+#hotlink protection
+# RewriteEngine On
+# RewriteCond %{HTTP_REFERER} !^$
+# RewriteCond %{HTTP_REFERER} !^http(s)?://(www.)?bruge.re/.*$ [NC]
+# RewriteCond %{HTTP_REFERER} !^http(s)?://(www.)?brugerw.cluster029.hosting.ovh.net/.*$ [NC]
+# RewriteRule .(jpeg|JPEG|jpe|JPE|jpg|JPG|gif|GIF|png|PNG)$  - [R,L]

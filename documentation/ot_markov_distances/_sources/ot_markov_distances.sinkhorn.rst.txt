@@ -1,0 +1,7 @@
+ot\_markov\_distances.sinkhorn module
+=====================================
+
+.. automodule:: ot_markov_distances.sinkhorn
+   :members:
+   :undoc-members:
+   :show-inheritance:

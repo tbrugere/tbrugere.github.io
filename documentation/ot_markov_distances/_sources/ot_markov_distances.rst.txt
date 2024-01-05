@@ -1,0 +1,21 @@
+ot\_markov\_distances package
+=============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ot_markov_distances.discounted_wl
+   ot_markov_distances.sinkhorn
+   ot_markov_distances.utils
+   ot_markov_distances.wl
+
+Module contents
+---------------
+
+.. automodule:: ot_markov_distances
+   :members:
+   :undoc-members:
+   :show-inheritance:
