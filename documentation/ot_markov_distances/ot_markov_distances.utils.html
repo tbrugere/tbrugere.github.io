@@ -46,10 +46,12 @@
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to ot_markov_distances’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notes_gradient.html">Notes on Gradient computation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="ot_markov_distances.html">ot_markov_distances package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="ot_markov_distances.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="ot_markov_distances.discounted_wl.html">ot_markov_distances.discounted_wl module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ot_markov_distances.misc.html">ot_markov_distances.misc module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ot_markov_distances.sinkhorn.html">ot_markov_distances.sinkhorn module</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">ot_markov_distances.utils module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#ot_markov_distances.utils.weighted_transition_matrix"><code class="docutils literal notranslate"><span class="pre">weighted_transition_matrix()</span></code></a></li>
@@ -101,13 +103,23 @@
              
   <section id="module-ot_markov_distances.utils">
 <span id="ot-markov-distances-utils-module"></span><h1>ot_markov_distances.utils module<a class="headerlink" href="#module-ot_markov_distances.utils" title="Permalink to this heading"></a></h1>
+<p>This module contains a lot of miscellanous functions.</p>
+<p>It contains</p>
+<ul class="simple">
+<li><p>Functions on markov chains: <a class="reference internal" href="#ot_markov_distances.utils.weighted_transition_matrix" title="ot_markov_distances.utils.weighted_transition_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">weighted_transition_matrix()</span></code></a> , <a class="reference internal" href="#ot_markov_distances.utils.weighted_transition_matrix" title="ot_markov_distances.utils.weighted_transition_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">weighted_transition_matrix()</span></code></a>, <a class="reference internal" href="#ot_markov_distances.utils.degree_markov" title="ot_markov_distances.utils.degree_markov"><code class="xref py py-func docutils literal notranslate"><span class="pre">degree_markov()</span></code></a></p></li>
+<li><p>Display functions <a class="reference internal" href="#ot_markov_distances.utils.draw_markov" title="ot_markov_distances.utils.draw_markov"><code class="xref py py-func docutils literal notranslate"><span class="pre">draw_markov()</span></code></a></p></li>
+<li><p>Support for sparse markov chains: <a class="reference internal" href="#ot_markov_distances.utils.densify" title="ot_markov_distances.utils.densify"><code class="xref py py-func docutils literal notranslate"><span class="pre">densify()</span></code></a>, <a class="reference internal" href="#ot_markov_distances.utils.dummy_densify" title="ot_markov_distances.utils.dummy_densify"><code class="xref py py-func docutils literal notranslate"><span class="pre">dummy_densify()</span></code></a>, <a class="reference internal" href="#ot_markov_distances.utils.cost_matrix_index" title="ot_markov_distances.utils.cost_matrix_index"><code class="xref py py-func docutils literal notranslate"><span class="pre">cost_matrix_index()</span></code></a> etc.</p></li>
+</ul>
+<p>It would gain to be broken up into submodules, and merged with misc.py
+(as utils.markov, utils.display, utils.misc, utils.sparse)
+(TODO for a next version)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="ot_markov_distances.utils.weighted_transition_matrix">
 <span class="sig-prename descclassname"><span class="pre">ot_markov_distances.utils.</span></span><span class="sig-name descname"><span class="pre">weighted_transition_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ot_markov_distances.utils.weighted_transition_matrix" title="Permalink to this definition"></a></dt>
 <dd><p>Create a LMMC from a Graph</p>
 <p>This function is largely inspired from the same one here
 <a class="reference external" href="https://github.com/chens5/WL-distance/blob/main/utils/utils.py">https://github.com/chens5/WL-distance/blob/main/utils/utils.py</a></p>
-<p>See def 5 in <span id="id1">Chen <em>et al.</em> [<a class="reference internal" href="index.html#id4" title="Samantha Chen, Sunhyuk Lim, Facundo Mémoli, Zhengchao Wan, and Yusu Wang. Weisfeiler-Lehman meets Gromov-Wasserstein. In International Conference on Machine Learning (ICML), 3371-3416. PMLR, 2022.">CLM+22</a>]</span>,</p>
+<p>See def 5 in <span id="id1">Chen <em>et al.</em> [<a class="reference internal" href="index.html#id3" title="Samantha Chen, Sunhyuk Lim, Facundo Mémoli, Zhengchao Wan, and Yusu Wang. Weisfeiler-Lehman meets Gromov-Wasserstein. In International Conference on Machine Learning (ICML), 3371-3416. PMLR, 2022.">CLM+22</a>]</span>,</p>
 <p>It returns the transition matrix of the random walk on graph G,
 where the probability of staying in the same node is q,
 and the probablity of transiting to one of the neighboring nodes

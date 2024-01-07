@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basic Usage &mdash; ot_markov_distances  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Notes on Gradient computation" href="notes_gradient.html" />
+    <link rel="prev" title="Welcome to ot_markov_distances’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ot_markov_distances
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to ot_markov_distances’s documentation!</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notes_gradient.html">Notes on Gradient computation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ot_markov_distances.html">ot_markov_distances package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ot_markov_distances</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Basic Usage</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/basic_usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="basic-usage">
+<h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading"></a></h1>
+<p>For installation instructions, refer to the <span class="xref std std-ref">main page of the documentation</span></p>
+<p>This package contains 3 modules (plus some utility and misc. functions)</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="ot_markov_distances.discounted_wl.html#module-ot_markov_distances.discounted_wl" title="ot_markov_distances.discounted_wl"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ot_markov_distances.discounted_wl</span></code></a> is the main module. It contains the discounted wl distance code
+- In particular <code class="xref py py-func docutils literal notranslate"><span class="pre">ot_markov_distance.discounted_wl.discounted_wl_infty()</span></code> computes the discounted wl-<span class="math notranslate nohighlight">\(\infty\)</span> distance, <strong>with support for backpropagation</strong>.</p></li>
+<li><p><a class="reference internal" href="ot_markov_distances.sinkhorn.html#module-ot_markov_distances.sinkhorn" title="ot_markov_distances.sinkhorn"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ot_markov_distances.sinkhorn</span></code></a> contains our (pytorch, vectorized) implementation of the sinkhorn distance, with support for backpropagation.</p></li>
+<li><p><a class="reference internal" href="ot_markov_distances.wl.html#module-ot_markov_distances.wl" title="ot_markov_distances.wl"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ot_markov_distances.wl</span></code></a> contains our (pytorch) implementation of the wl distance by <span id="id1">Chen <em>et al.</em> [<a class="reference internal" href="index.html#id3" title="Samantha Chen, Sunhyuk Lim, Facundo Mémoli, Zhengchao Wan, and Yusu Wang. Weisfeiler-Lehman meets Gromov-Wasserstein. In International Conference on Machine Learning (ICML), 3371-3416. PMLR, 2022.">CLM+22</a>]</span></p></li>
+</ul>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h2>
+<p>Consider reading the experiments code for more in-depth examples.</p>
+<p>In particular the loop in <code class="docutils literal notranslate"><span class="pre">experiments/utils/optimization_loop.py</span></code> shows how one can use the discounted WL distance as an optimization loss.</p>
+<p><strong>Computation of the distance between two graphs</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">ot_markov_distances.discounted_wl</span> <span class="kn">import</span> <span class="n">discounted_wl_infty</span>
+<span class="kn">from</span> <span class="nn">ot_markov_distances.utils</span> <span class="kn">import</span> <span class="n">weighted_transition_matrix</span><span class="p">,</span> <span class="n">uniform_distribution</span>
+
+<span class="c1"># generate dummy graphs</span>
+<span class="n">G1</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">erdos_renyi_graph</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">G2</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">erdos_renyi_graph</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mf">.15</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># make them into markov transition matrices (with self-transition probability q=0.)</span>
+<span class="c1"># the unsqueeze call is to create the batch dimension</span>
+<span class="n">M1</span> <span class="o">=</span> <span class="n">weighted_transition_matrix</span><span class="p">(</span><span class="n">G1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">M2</span> <span class="o">=</span> <span class="n">weighted_transition_matrix</span><span class="p">(</span><span class="n">G2</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># use the uniform distribution. This has given the stablest results in our experiments</span>
+<span class="c1"># as opposed to the default, the stationary distribution of the markov chain</span>
+<span class="n">mu1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">30</span><span class="p">,)</span> <span class="o">/</span>  <span class="mi">30</span>
+<span class="n">mu2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,)</span> <span class="o">/</span>  <span class="mi">20</span>
+
+<span class="c1"># and a random distance matrix (simulated here as the distance between random labels of size 5)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="n">distance</span> <span class="o">=</span> <span class="n">discounted_wl_infty</span><span class="p">(</span><span class="n">M1</span><span class="p">,</span> <span class="n">M2</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">muX</span><span class="o">=</span><span class="n">mu1</span><span class="p">,</span> <span class="n">muY</span><span class="o">=</span><span class="n">mu2</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to ot_markov_distances’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="notes_gradient.html" class="btn btn-neutral float-right" title="Notes on Gradient computation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

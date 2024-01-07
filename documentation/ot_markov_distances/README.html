@@ -43,6 +43,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Welcome to ot_markov_distances’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notes_gradient.html">Notes on Gradient computation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ot_markov_distances.html">ot_markov_distances package</a></li>
 </ul>
@@ -74,8 +75,8 @@
   <section id="ot-markov-distances">
 <h1>ot_markov_distances<a class="headerlink" href="#ot-markov-distances" title="Permalink to this heading"></a></h1>
 <p><img alt="github workflow badge" src="https://github.com/YusuLab/ot_markov_distances/actions/workflows/testing-publish.yml/badge.svg" /> <a class="reference external" href="https://codecov.io/gh/YusuLab/ot_markov_distances"><img alt="codecov" src="https://codecov.io/gh/YusuLab/ot_markov_distances/branch/main/graph/badge.svg" /></a> <a class="reference external" href="https://tristan.bruge.re/documentation/ot_markov_distances"><img alt="doc badge" src="https://img.shields.io/badge/documentation-green?style=for-the-badge&amp;logo=readme&amp;logoColor=black" /></a> <img alt="pytorch badge" src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&amp;logo=PyTorch&amp;logoColor=white" /></p>
-<p>Distances on graphs based on optimal transport</p>
-<p>This is the implementation code for <span id="id1">Brugère <em>et al.</em> [<a class="reference internal" href="index.html#id3" title="Tristan Brugère, Zhengchao Wan, and Yusu Wang. Distances for markov chains, and their differentiation. 2023. arXiv:2302.08621.">BWW23</a>]</span>.</p>
+<p>Differentiable distances on graphs based on optimal transport</p>
+<p>This is the implementation code for</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Brugere</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="p">,</span> <span class="n">Wan</span><span class="p">,</span> <span class="n">Z</span><span class="o">.</span><span class="p">,</span> <span class="o">&amp;</span> <span class="n">Wang</span><span class="p">,</span> <span class="n">Y</span><span class="o">.</span> <span class="p">(</span><span class="mi">2023</span><span class="p">)</span><span class="o">.</span> <span class="n">Distances</span> <span class="k">for</span> <span class="n">Markov</span> <span class="n">Chains</span><span class="p">,</span> <span class="ow">and</span> <span class="n">Their</span> <span class="n">Differentiation</span><span class="o">.</span> <span class="n">ArXiv</span><span class="p">,</span> <span class="nb">abs</span><span class="o">/</span><span class="mf">2302.08621</span><span class="o">.</span>
 </pre></div>
 </div>
@@ -84,7 +85,12 @@
 <section id="installing-as-a-library">
 <h3>Installing as a library<a class="headerlink" href="#installing-as-a-library" title="Permalink to this heading"></a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">ot_markov_distances</span></code> package can be installed with the following command:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install git+https://github.com/YusuLab/ot_markov_distances</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install ot-markov-distances</span>
+</pre></div>
+</div>
+<p>If for some reason you need to use <code class="docutils literal notranslate"><span class="pre">cuda11.8</span></code> (ie you are installing <code class="docutils literal notranslate"><span class="pre">torch+cuda118</span></code>)
+then use the following command instead</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install git+https://github.com/YusuLab/ot_markov_distances@cuda118</span>
 </pre></div>
 </div>
 </section>
@@ -101,8 +107,9 @@ to a version above (latest release at the time of writing is <code class="docuti
 <h4>Python dependencies<a class="headerlink" href="#python-dependencies" title="Permalink to this heading"></a></h4>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The main branch uses <code class="docutils literal notranslate"><span class="pre">cuda11.8</span></code> in its dependencies. If for some
-reason you need to use <code class="docutils literal notranslate"><span class="pre">cuda12</span></code>, clone the <code class="docutils literal notranslate"><span class="pre">cuda12</span></code> branch
+<p>The main branch uses the default (<code class="docutils literal notranslate"><span class="pre">cuda12</span></code>) version of torch
+in its dependencies. If for some
+reason you need to use <code class="docutils literal notranslate"><span class="pre">cuda11.8</span></code>, clone the <code class="docutils literal notranslate"><span class="pre">cuda118</span></code> branch
 instead</p>
 </div>
 <p>This package manages its dependencies via
@@ -219,6 +226,27 @@ directory (see <a class="reference external" href="#project-structure">Project s
 </div>
 <p>The yaml file containing dataset information that should be passed to the command line is in <code class="docutils literal notranslate"><span class="pre">experiments/grakel_datasets.yaml</span></code>.
 Modifying this file should allow running the experiment on different datasets.</p>
+</section>
+</section>
+<section id="faq">
+<h2>FAQ<a class="headerlink" href="#faq" title="Permalink to this heading"></a></h2>
+<section id="i-have-a-question-about-the-paper">
+<h3>I have a question about the paper<a class="headerlink" href="#i-have-a-question-about-the-paper" title="Permalink to this heading"></a></h3>
+<p>In this case just send me an email through the email address mentioned in the paper.</p>
+</section>
+<section id="i-have-noticed-a-bug-in-the-code">
+<h3>I have noticed a bug in the code<a class="headerlink" href="#i-have-noticed-a-bug-in-the-code" title="Permalink to this heading"></a></h3>
+<p>Please use the Github “Issues” feature to open a ticket, and post a description of the bug, the error message and a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Minimal_reproducible_example">minimal reproducible example</a> . I’ll try to fix it.</p>
+<p>Or if you have fixed it, you can submit a Pull Request directly</p>
+</section>
+<section id="i-cannot-install-the-library">
+<h3>I cannot install the library<a class="headerlink" href="#i-cannot-install-the-library" title="Permalink to this heading"></a></h3>
+<p>If you followed all the instructions correctly, please create a ticket using Github Issues.</p>
+</section>
+<section id="why-do-you-need-python3-10">
+<h3>Why do you need <code class="docutils literal notranslate"><span class="pre">python3.10</span></code> ?<a class="headerlink" href="#why-do-you-need-python3-10" title="Permalink to this heading"></a></h3>
+<p>Because I am using <a class="reference external" href="https://peps.python.org/pep-0634/">structural pattern matching</a>, and some typing features such as <a class="reference external" href="https://peps.python.org/pep-0604/">this one</a> .</p>
 </section>
 </section>
 </section>

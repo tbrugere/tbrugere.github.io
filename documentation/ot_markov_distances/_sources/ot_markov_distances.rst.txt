@@ -8,6 +8,7 @@ Submodules
    :maxdepth: 4
 
    ot_markov_distances.discounted_wl
+   ot_markov_distances.misc
    ot_markov_distances.sinkhorn
    ot_markov_distances.utils
    ot_markov_distances.wl

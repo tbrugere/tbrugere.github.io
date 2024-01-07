@@ -3,9 +3,9 @@ ot_markov_distances
 
 |github workflow badge| |codecov| |doc badge| |pytorch badge| 
 
-Distances on graphs based on optimal transport
+Differentiable distances on graphs based on optimal transport
 
-This is the implementation code for :cite:t:`brugere2023distances`.
+This is the implementation code for 
 
 ::
 
@@ -21,7 +21,14 @@ The ``ot_markov_distances`` package can be installed with the following command:
 
 .. code:: console
 
-   pip install git+https://github.com/YusuLab/ot_markov_distances
+   pip install ot-markov-distances
+
+If for some reason you need to use ``cuda11.8`` (ie you are installing ``torch+cuda118``)
+then use the following command instead
+
+.. code:: console
+
+   pip install git+https://github.com/YusuLab/ot_markov_distances@cuda118
 
 Dependencies
 ~~~~~~~~~~~~
@@ -39,8 +46,9 @@ Python dependencies
 ^^^^^^^^^^^^^^^^^^^
 
 .. note::
-   The main branch uses ``cuda11.8`` in its dependencies. If for some
-   reason you need to use ``cuda12``, clone the ``cuda12`` branch
+   The main branch uses the default (``cuda12``) version of torch 
+   in its dependencies. If for some
+   reason you need to use ``cuda11.8``, clone the ``cuda118`` branch
    instead
 
 This package manages its dependencies via
@@ -184,6 +192,35 @@ Now you can run the classification experiment using the command
 
 The yaml file containing dataset information that should be passed to the command line is in ``experiments/grakel_datasets.yaml``. 
 Modifying this file should allow running the experiment on different datasets.
+
+FAQ
+---
+
+I have a question about the paper
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In this case just send me an email through the email address mentioned in the paper.
+
+I have noticed a bug in the code
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Please use the Github "Issues" feature to open a ticket, and post a description of the bug, the error message and a
+`minimal reproducible example <https://en.wikipedia.org/wiki/Minimal_reproducible_example>`_ . I’ll try to fix it.
+
+Or if you have fixed it, you can submit a Pull Request directly
+
+I cannot install the library
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you followed all the instructions correctly, please create a ticket using Github Issues.
+
+
+Why do you need ``python3.10`` ?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Because I am using `structural pattern matching <https://peps.python.org/pep-0634/>`_, and some typing features such as `this one <https://peps.python.org/pep-0604/>`_ .
+
+
 
 .. _`the tudataset repo`: https://github.com/chrsmrrs/tudataset
 
