@@ -73,7 +73,7 @@
              
   <section id="ot-markov-distances">
 <h1>ot_markov_distances<a class="headerlink" href="#ot-markov-distances" title="Permalink to this heading"></a></h1>
-<p><img alt="github workflow badge" src="https://github.com/YusuLab/ot_markov_distances/actions/workflows/testing-and-docs.yml/badge.svg" /> <a class="reference external" href="https://codecov.io/gh/YusuLab/ot_markov_distances"><img alt="codecov" src="https://codecov.io/gh/YusuLab/ot_markov_distances/branch/main/graph/badge.svg" /></a></p>
+<p><img alt="github workflow badge" src="https://github.com/YusuLab/ot_markov_distances/actions/workflows/testing-publish.yml/badge.svg" /> <a class="reference external" href="https://codecov.io/gh/YusuLab/ot_markov_distances"><img alt="codecov" src="https://codecov.io/gh/YusuLab/ot_markov_distances/branch/main/graph/badge.svg" /></a> <a class="reference external" href="https://tristan.bruge.re/documentation/ot_markov_distances"><img alt="doc badge" src="https://img.shields.io/badge/documentation-green?style=for-the-badge&amp;logo=readme&amp;logoColor=black" /></a> <img alt="pytorch badge" src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&amp;logo=PyTorch&amp;logoColor=white" /></p>
 <p>Distances on graphs based on optimal transport</p>
 <p>This is the implementation code for <span id="id1">Brugère <em>et al.</em> [<a class="reference internal" href="index.html#id3" title="Tristan Brugère, Zhengchao Wan, and Yusu Wang. Distances for markov chains, and their differentiation. 2023. arXiv:2302.08621.">BWW23</a>]</span>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Brugere</span><span class="p">,</span> <span class="n">T</span><span class="o">.</span><span class="p">,</span> <span class="n">Wan</span><span class="p">,</span> <span class="n">Z</span><span class="o">.</span><span class="p">,</span> <span class="o">&amp;</span> <span class="n">Wang</span><span class="p">,</span> <span class="n">Y</span><span class="o">.</span> <span class="p">(</span><span class="mi">2023</span><span class="p">)</span><span class="o">.</span> <span class="n">Distances</span> <span class="k">for</span> <span class="n">Markov</span> <span class="n">Chains</span><span class="p">,</span> <span class="ow">and</span> <span class="n">Their</span> <span class="n">Differentiation</span><span class="o">.</span> <span class="n">ArXiv</span><span class="p">,</span> <span class="nb">abs</span><span class="o">/</span><span class="mf">2302.08621</span><span class="o">.</span>
@@ -81,8 +81,24 @@
 </div>
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Permalink to this heading"></a></h2>
+<section id="installing-as-a-library">
+<h3>Installing as a library<a class="headerlink" href="#installing-as-a-library" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">ot_markov_distances</span></code> package can be installed with the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install git+https://github.com/YusuLab/ot_markov_distances</span>
+</pre></div>
+</div>
+</section>
 <section id="dependencies">
 <h3>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading"></a></h3>
+<section id="python-version">
+<h4>Python version<a class="headerlink" href="#python-version" title="Permalink to this heading"></a></h4>
+<p>This project requires <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">3.10</span></code> <em>a minima</em>.
+If your python version is prior to <code class="docutils literal notranslate"><span class="pre">3.10</span></code>,
+you need to update (or to create a new <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment)
+to a version above (latest release at the time of writing is <code class="docutils literal notranslate"><span class="pre">3.12</span></code>)</p>
+</section>
+<section id="python-dependencies">
+<h4>Python dependencies<a class="headerlink" href="#python-dependencies" title="Permalink to this heading"></a></h4>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The main branch uses <code class="docutils literal notranslate"><span class="pre">cuda11.8</span></code> in its dependencies. If for some
@@ -94,6 +110,13 @@ instead</p>
 (otherwise if you prefer to manage them manually, a list of the
 dependencies is available in the file <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>)</p>
 <p>When you have <code class="docutils literal notranslate"><span class="pre">poetry</span></code>, you can add dependencies using our makefile</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to create a virtual environment for this project
+(as opposed to using the one you are currently in)
+you can use the command <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">env</span> <span class="pre">use</span> <span class="pre">python3.12</span></code>
+(or other python version)</p>
+</div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>make<span class="w"> </span>.make/deps
 </pre></div>
 </div>
@@ -101,6 +124,19 @@ dependencies is available in the file <code class="docutils literal notranslate"
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>poetry<span class="w"> </span>install
 </pre></div>
 </div>
+</section>
+<section id="tudataset">
+<h4>TUDataset<a class="headerlink" href="#tudataset" title="Permalink to this heading"></a></h4>
+<p><em>If you are planning to reproduce the classification experiment.</em></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">TUDataset</span></code> package is also needed to run the classification experiment,
+but it is not available via <code class="docutils literal notranslate"><span class="pre">pip</span></code> / <code class="docutils literal notranslate"><span class="pre">poetry</span></code>.
+To install it, follow the instruction in <a class="reference external" href="https://github.com/chrsmrrs/tudataset">the tudataset repo</a>,
+including the “Compilation of kernel baselines” section, and add the directory where you downloaded it to your <code class="docutils literal notranslate"><span class="pre">$PYTHONPATH</span></code>.
+eg:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="s2">&quot;/path/to/tudataset:</span><span class="nv">$PYTHONPATH</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="project-structure">
 <h3>Project structure<a class="headerlink" href="#project-structure" title="Permalink to this heading"></a></h3>
@@ -127,6 +163,7 @@ dependencies is available in the file <code class="docutils literal notranslate"
 </section>
 <section id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading"></a></h2>
+<p>The documentation is available online: <a class="reference external" href="http://tristan.bruge.re/documentation/ot_markov_distances">read the documentation</a></p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Do not edit the documentation directly in the <code class="docutils literal notranslate"><span class="pre">docs/</span></code> folder,
@@ -158,6 +195,31 @@ readthedocs format</p>
 directory (see <a class="reference external" href="#project-structure">Project structure</a> ).</p>
 <p>The Barycenter and Coarsening experiments can be found in
 <code class="docutils literal notranslate"><span class="pre">experiments/Barycenter.ipynb</span></code> and <code class="docutils literal notranslate"><span class="pre">experiments/Coarsening.ipynb</span></code>.</p>
+<p>The performance graphs are computed in  <code class="docutils literal notranslate"><span class="pre">experiments/Performance.ipynb</span></code></p>
+<section id="classification-experiment">
+<h3>Classification experiment<a class="headerlink" href="#classification-experiment" title="Permalink to this heading"></a></h3>
+<p>The Classification experiment (see the first paragraph of section 6 in the paper) is not in a jupyter notebook, but accessible via a command line.</p>
+<p>As an additional dependency it needs <code class="docutils literal notranslate"><span class="pre">tudataset</span></code>, which is not installable via <code class="docutils literal notranslate"><span class="pre">pip</span></code>. To install it follow the instructions in <a class="reference external" href="https://github.com/chrsmrrs/tudataset">the tudataset repo</a>.
+, including the “Compilation of kernel baselines” section, and add the directory where you downloaded it to your <code class="docutils literal notranslate"><span class="pre">$PYTHONPATH</span></code>.</p>
+<p>Now you can run the classification experiment using the command</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>experiments.classification
+<span class="go">usage: python -m experiments.classification [-h] {datasets_info,distances,eval} ...</span>
+
+<span class="go">Run classification experiments on graph datasets</span>
+
+<span class="go">positional arguments:</span>
+<span class="go">  {datasets_info,distances,eval}</span>
+<span class="go">    datasets_info       Print information about given datasets</span>
+<span class="go">    distances           Compute distance matrices for given datasets</span>
+<span class="go">    eval                Evaluate a kernel based on distance matrix</span>
+
+<span class="go">options:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+</pre></div>
+</div>
+<p>The yaml file containing dataset information that should be passed to the command line is in <code class="docutils literal notranslate"><span class="pre">experiments/grakel_datasets.yaml</span></code>.
+Modifying this file should allow running the experiment on different datasets.</p>
+</section>
 </section>
 </section>
 
