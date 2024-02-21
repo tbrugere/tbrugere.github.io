@@ -1,0 +1,50 @@
+# section-divs: true
+standalone: true
+number-sections: true
+
+
+css: 
+  - resources/headers/admonitions.css
+
+to: revealjs
+template: resources/pandoc/reveal_template.html
+
+include-in-header:
+    - resources/headers/math-header.html
+# shift-heading-level-by: -1
+citeproc: true
+incremental: true
+reference-location: section # to get the footnotes on the slide
+
+filters: #[]
+  # - pandoc-xnos
+  # - pandoc-theoremnos
+  # - pandoc-eqnos
+  - pandoc-fignos
+# css:
+#   - /resources/headers/eqnos.css
+#   - /resources/headers/100-bytes.css
+html-math-method:
+  method: mathjax
+metadata:
+  center: False
+  slideNumber: True
+  showSlideNumber: 'all'
+  disableLayout: True
+  progress: True
+  custom-theme: resources/headers/custom.css
+  revealjs-url: resources/reveal
+  display: ""
+  transition: slide
+#   margin-left: 1cm
+#   margin-right: 1cm
+#   margin-top: 1cm
+#   margin-bottom: 1cm
+#   document-css: false
+  bibliography: "./resources/bibliography.bib"
+  # theoremnos-cleveref: True
+  # xnos-number-by-section: True
+  # link-citations: true
+  # link-bibliography: true
+  # reference-section-title: Bibliography
+
