@@ -256,22 +256,24 @@ class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </aside>
 </section>
-<section id="challenges-with-fgw"
-class="slide level2 centered-slide big-slide" data-number="1.6">
-<h2 class="centered-slide big-slide" data-number="1.6"><span
+<section id="challenges-with-fgw" class="slide level2 centered-slide"
+data-number="1.6">
+<h2 class="centered-slide" data-number="1.6"><span
 class="header-section-number">1.6</span> Challenges with FGW:</h2>
+<div class="list-in-blocks">
 <ul>
-<li class="fragment">No differentiation
+<li class="fragment"><strong>No differentiation</strong>
 <ul>
 <li class="fragment">(but can be minimized by a heuristic
 procedure)</li>
 </ul></li>
-<li class="fragment">Computation is heuristic
+<li class="fragment"><strong>Computation is heuristic</strong>
 <ul>
 <li class="fragment">(no guarantee of convergence)</li>
 </ul></li>
 <li class="fragment">Intuition does not apply to directed graphs</li>
 </ul>
+</div>
 </section>
 <section id="preliminaries" class="slide level2" data-number="1.7">
 <h2 data-number="1.7"><span class="header-section-number">1.7</span>
@@ -279,15 +281,17 @@ Preliminaries:</h2>
 <div class="figurewrap">
 <figure>
 <img data-src="./resources/images/markov_example.svg" title="fig:"
-class="test" style="height:8em" alt="A markov chain with 3 states" />
-<figcaption aria-hidden="true">A markov chain with 3 states</figcaption>
+class="test" style="height:8em" alt="A Markov chain with 3 states" />
+<figcaption aria-hidden="true">A Markov chain with 3 states</figcaption>
 </figure>
 </div>
 <ul>
 <li class="fragment"><p><strong>Markov chain</strong></p>
 <ul>
-<li class="fragment">“<span class="math inline">\(\text{Past} ⫫
-\text{Future} | \text{Present}\)</span>”</li>
+<li class="fragment">Memoryless random walk</li>
+<li class="fragment">On a space of “states”</li>
+<li class="fragment">Next state distribution depends only on the current
+state</li>
 </ul></li>
 <li class="fragment"><p><strong>Optimal Transport</strong>
 (Wasserstein’s distance, Earth mover’s distance…)</p>
@@ -316,8 +320,8 @@ class="header-section-number">2.1</span> From Graph to Markov Chain</h2>
 <div class="fragment">
 <figure id="fig:graph_to_markov">
 <img data-src="resources/images/graph_to_markov.png" title="fig:"
-style="width:80.0%" alt="Graph to markov chain" />
-<figcaption aria-hidden="true">Graph to markov chain</figcaption>
+style="width:80.0%" alt="Graph to Markov chain" />
+<figcaption aria-hidden="true">Graph to Markov chain</figcaption>
 </figure>
 <ul>
 <li class="fragment">Random walk gives a <strong>Continuous</strong>
@@ -325,10 +329,90 @@ representation of the combinatiorial object</li>
 </ul>
 </div>
 </section>
+<section id="optimal-transport-on-markov-chains" class="slide level2"
+data-number="2.2">
+<h2 data-number="2.2"><span class="header-section-number">2.2</span>
+Optimal transport on Markov Chains</h2>
+<div class="replace">
+<p class="fragment fade-out" data-fragment-index="2">
+Regular
+</p>
+<p class="fragment fade-in" data-fragment-index="2">
+Markov
+</p>
+</div>
+<strong>optimal transport</strong> For
+<div class="replace">
+<p class="fragment fade-out" data-fragment-index="2">
+Pointset law <span class="math inline">\((p_X, p_X)\)</span>
+</p>
+<p class="fragment fade-in" data-fragment-index="2">
+Markov Chains <span class="math inline">\((\mathcal{X},
+\mathcal{Y})\)</span>
+</p>
+</div>
+With cost
+<div class="replace">
+<p class="fragment fade-out" data-fragment-index="2">
+<span class="math inline">\(C(X, Y)\)</span> between points
+</p>
+<p class="fragment fade-in" data-fragment-index="2">
+<span class="math inline">\(C(X_i, Y_i)\)</span> between states
+</p>
+</div>
+<div class="fragment fade-in hg-green" data-fragment-index="3">
+<p>Take <span class="math inline">\(p\)</span> distribution over <span
+class="math inline">\(\N\)</span> and <span class="math inline">\(T \sim
+p\)</span> independent of <span class="math inline">\(X\)</span> and
+<span class="math inline">\(Y\)</span></p>
+</div>
+<div class="replace replace-block nocolor">
+<div class="fragment fade-out" data-fragment-index="2">
+<p><span class="math display">\[d_{OT}(p_X, p_Y; C) =
+\inf_{\substack{(X, Y) \text{ coupling} \\ X\sim p_X \\ Y\sim p_Y}} \E\,
+C(X,Y)\]</span></p>
+</div>
+<div class="fragment fade-in-then-out" data-fragment-index="2">
+<p><span class="math display">\[d_{???}(\mathcal{X}, \mathcal{Y}; C) =
+\inf_{\substack{(X_t, Y_t) {\color{#D462AD}\text{ Markovian coupling }
+}\\ X_t\sim \mathcal{X} \\ Y_t \sim \mathcal{Y}}} \E\,
+C(X_{\color{#D462AD} t},Y_{\color{#D462AD} t})\]</span></p>
+</div>
+<div class="fragment fade-in" data-fragment-index="3">
+<p><span class="math display">\[d_{\color{#6E963B}OTM}(\mathcal{X},
+\mathcal{Y}; C) = \inf_{\substack{(X_t, Y_t) {\color{#D462AD}\text{
+Markovian coupling } }\\ X_t\sim \mathcal{X} \\ Y_t \sim \mathcal{Y}}}
+\E\, C(X_{\color{#6E963B} T},Y_{\color{#6E963B} T})\]</span></p>
+</div>
+</div>
+</section>
+<section id="contributions-theoretical-framework"
+class="slide level2 centered-slide" data-number="2.3">
+<h2 class="centered-slide" data-number="2.3"><span
+class="header-section-number">2.3</span> Contributions: Theoretical
+Framework</h2>
+<ul>
+<li class="fragment"><p>Study of optimal transport method for Markov
+chains</p></li>
+<li class="fragment"><p><strong>Theoretical framework:</strong> Optimal
+transport Markov (OTM) distances.</p>
+<ul>
+<li class="fragment">links previous Optimal transport-based methods on
+Markov chains.</li>
+<li class="fragment"><span class="citation"
+data-cites="moulos2021bicausal">(Moulos 2021)</span></li>
+<li class="fragment"><span class="citation"
+data-cites="oconnorGraphOptimalTransport2021">(O’Connor et al.
+2021)</span></li>
+<li class="fragment"><span class="citation"
+data-cites="chen2022weisfeilerlehman">(Chen et al. 2022)</span></li>
+</ul></li>
+</ul>
+</section>
 <section id="contributions-ddwl-distance"
-class="slide level2 centered-slide" data-number="2.2">
-<h2 class="centered-slide" data-number="2.2"><span
-class="header-section-number">2.2</span> Contributions:
+class="slide level2 centered-slide" data-number="2.4">
+<h2 class="centered-slide" data-number="2.4"><span
+class="header-section-number">2.4</span> Contributions:
 DDWL-Distance</h2>
 <p><strong>particular case of interest</strong>: <span
 class="math inline">\(\delta\)</span>-discounted WL distances.</p>
@@ -336,7 +420,7 @@ class="math inline">\(\delta\)</span>-discounted WL distances.</p>
 <ul>
 <li class="fragment"><p><strong>Differentiable</strong></p>
 <ul>
-<li class="fragment">In the label values <strong>and</strong> the markov
+<li class="fragment">In the label values <strong>and</strong> the Markov
 chain structure</li>
 <li class="fragment">With some regularization</li>
 </ul></li>
@@ -354,27 +438,10 @@ methods</li>
 </ul>
 </div>
 </section>
-<section id="contributions-theoretical-framework"
-class="slide level2 centered-slide" data-number="2.3">
-<h2 class="centered-slide" data-number="2.3"><span
-class="header-section-number">2.3</span> Contributions: Theoretical
-Framework</h2>
-<ul>
-<li class="fragment"><strong>Theoretical framework:</strong> Optimal
-transport markov (OTM) distances.
-<ul>
-<li class="fragment">links previous Markov-based methods</li>
-<li class="fragment"><span class="citation"
-data-cites="moulos2021bicausal">(Moulos 2021)</span></li>
-<li class="fragment"><span class="citation"
-data-cites="chen2022weisfeilerlehman">(Chen et al. 2022)</span></li>
-</ul></li>
-</ul>
-</section>
 <section id="intuition" class="slide level2 centered-slide"
-data-number="2.4">
-<h2 class="centered-slide" data-number="2.4"><span
-class="header-section-number">2.4</span> Intuition</h2>
+data-number="2.5">
+<h2 class="centered-slide" data-number="2.5"><span
+class="header-section-number">2.5</span> Intuition</h2>
 <ul>
 <li class="fragment"><p>Similar to the Weisfeiler-Lehman isomorphism
 test</p></li>
@@ -385,8 +452,8 @@ test</p></li>
 distributions are</p></li>
 </ul>
 </section>
-<section id="formalization" class="slide level2" data-number="2.5">
-<h2 data-number="2.5"><span class="header-section-number">2.5</span>
+<section id="formalization" class="slide level2" data-number="2.6">
+<h2 data-number="2.6"><span class="header-section-number">2.6</span>
 Formalization</h2>
 <figure>
 <img data-src="resources/images/paper_qr.svg" title="fig:"
@@ -413,10 +480,10 @@ href="https://tristan.bruge.re/ot_markov_distances/paper">https://tristan.bruge.
     - Take the optimal coupling (the one that minimizes the expectation)
 -->
 </section>
-<section id="experiment-synthetic-data-noisy-circle-barycenter-i"
-class="slide level2" data-number="2.6">
-<h2 data-number="2.6"><span class="header-section-number">2.6</span>
-Experiment: Synthetic data — noisy circle barycenter (I)</h2>
+<section id="experiment-noisy-circle-barycenter" class="slide level2"
+data-number="2.7">
+<h2 data-number="2.7"><span class="header-section-number">2.7</span>
+Experiment: noisy circle barycenter</h2>
 <p>Compute by gradient descent: <span
 class="math display">\[\text{Barycenter}(G_1, G_2, \dots, G_n) =
 \inf_{G} \sum d(G, G_i)^2\]</span></p>
@@ -451,12 +518,12 @@ Erdős–Rényi noise</p>
 </div>
 </section>
 <section id="experiment-synthetic-data-noisy-circle-barycenter-ii"
-class="slide level2" data-number="2.7">
-<h2 data-number="2.7"><span class="header-section-number">2.7</span>
+class="slide level2" data-number="2.8">
+<h2 data-number="2.8"><span class="header-section-number">2.8</span>
 Experiment: Synthetic data — noisy circle barycenter (II)</h2>
 <figure id="fig:barycenter_anim">
 <video data-src="./resources/images/barycenter_animation.mp4"
-title="fig:" controls=""><a
+title="fig:" style="height:12rem;" controls=""><a
 href="./resources/images/barycenter_animation.mp4">Barycenter
 computation</a></video>
 <figcaption aria-hidden="true">Barycenter computation</figcaption>
@@ -477,11 +544,12 @@ class="slide level2 centered-slide" data-number="3.1">
 <h2 class="centered-slide" data-number="3.1"><span
 class="header-section-number">3.1</span> Current challenges and future
 work</h2>
+<div class="list-in-blocks">
 <ul>
 <li class="fragment"><p>Computationally expensive</p></li>
-<li class="fragment"><p>Ongoing work on generative models for
-netlists</p></li>
+<li class="fragment"><p>Ongoing work on generative models</p></li>
 </ul>
+</div>
 </section>
 <section id="thank-you" class="slide level2" data-number="3.2">
 <h2 data-number="3.2"><span class="header-section-number">3.2</span>
@@ -517,6 +585,14 @@ Moulos, Vrettos. 2021. <span>“Bicausal Optimal Transport for
 <span>M</span>arkov Chains via Dynamic Programming.”</span> In <em>2021
 IEEE International Symposium on Information Theory (ISIT)</em>, 1688–93.
 IEEE.
+</div>
+<div id="ref-oconnorGraphOptimalTransport2021" class="csl-entry"
+role="listitem">
+O’Connor, Kevin, Bongsoo Yi, Kevin McGoff, and Andrew B. Nobel. 2021.
+<span>“Graph <span>Optimal Transport</span> with <span>Transition
+Couplings</span> of <span>Random Walks</span>.”</span>
+<span>arXiv</span>. <a
+href="https://doi.org/10.48550/arXiv.2106.07106">https://doi.org/10.48550/arXiv.2106.07106</a>.
 </div>
 </div>
 </section></section>
