@@ -361,6 +361,9 @@ html {
   font-size: min(2.5vw, 4.1666666667vh);
 }
 
+@page {
+  size: landscape;
+}
 .reveal {
   background-color: #00629B;
 }
@@ -392,8 +395,12 @@ html {
   width: 80%;
   margin: 0.2rem 1rem 1rem 0;
 }
+.reveal .slides h2.smaller-title {
+  font-size: 1.44em;
+}
 .reveal .slides h3 {
   margin-top: 1rem;
+  margin-bottom: 0;
 }
 .reveal .slides figure, .reveal .slides .figure {
   margin: 1rem 2rem;
@@ -596,6 +603,26 @@ html {
   content: ", ";
 }
 
+@media print {
+  html:not(.print-pdf) .reveal .slides section {
+    position: relative !important;
+  }
+  html:not(.print-pdf) .reveal .slides section.stack {
+    height: auto !important;
+    width: auto !important;
+  }
+  html:not(.print-pdf) .reveal .slides section:not(.stack) {
+    page-break-inside: avoid;
+    page-break-after: always;
+    break-inside: avoid;
+    break-after: always;
+    height: min(100vh, 60vw) !important;
+    width: min(100vw, 166.6666666667vh) !important;
+  }
+  html:not(.print-pdf) .reveal .slides section.centered-slide {
+    display: flex !important;
+  }
+}
 .portrait {
   object-fit: cover;
   border-radius: 50%;
