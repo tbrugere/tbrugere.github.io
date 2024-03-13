@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* Bulma Utilities */
 .navbar-link:not(.is-arrowless)::after {
   border: 3px solid transparent;
@@ -1821,6 +1822,14 @@ a.navbar-item, a.navbar-item-selected,
 .navbar-item-selected {
   color: #221339;
   background-color: #FFFFFF; }
+
+.navbar-item.navbar-item-dropdown::before, .navbar-item-dropdown.navbar-item-selected::before {
+  content: "▼"; }
+.navbar-item.navbar-item-dropdown .navbar-dropdown .navbar-item, .navbar-item-dropdown.navbar-item-selected .navbar-dropdown .navbar-item, .navbar-item.navbar-item-dropdown .navbar-dropdown .navbar-item-selected, .navbar-item-dropdown.navbar-item-selected .navbar-dropdown .navbar-item-selected {
+  color: black; }
+.navbar-item.navbar-item-dropdown:hover > .navbar-dropdown, .navbar-item-dropdown.navbar-item-selected:hover > .navbar-dropdown {
+  display: flex;
+  flex-direction: column; }
 
 #brand {
   height: auto;

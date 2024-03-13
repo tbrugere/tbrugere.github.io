@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" /> -->
+  <meta name="author" content="Tristan Brugère" />
+  <meta name="author" content="Zhengchao Wan" />
+  <meta name="author" content="Yusu Wang" />
+  <title>Distances for Markov Chains, and Their Differentiation</title>
+  <link rel="stylesheet" href="resources/tilos/tilos.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <div id="math-header" >
+  $$
+  \newcommand{\dps}{\displaystyle}
+  \newcommand{\C}{\mathbb{C}}
+  \newcommand{\Q}{\mathbb{Q}}
+  \newcommand{\R}{\mathbb{R}}
+  \newcommand{\Z}{\mathbb{Z}}
+  \newcommand{\N}{\mathbb{N}}
+  \newcommand{\Mf}{\mathcal{M}} %manifold
+  \newcommand{\Lim}{\displaystyle\lim}
+  \newcommand{\ol}{\overline}
+  \renewcommand{\Pr}{\mathbb{P}}
+  \newcommand\diff{\mathop{}\!\mathrm{d}}
+  \newcommand\1{\mathbb{1}}
+  \newcommand\E{\mathbb{E}}
+  \newcommand\Σ{\sum}
+  \newcommand\inner[2]{\langle #1, #2 \rangle}
+  \DeclarePairedDelimiter\abs{\lvert}{\rvert}
+  \DeclarePairedDelimiter\norm{\|}{\|}
+  \DeclareMathOperator{\softmax}{Softmax}
+  $$
+  </div>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<header id="tilos-header" class="tilos-header">
+<div id="event-info-column" class="tilos-header-column">
+    <!-- <img src="resources/tilos/tilos-logo.png" alt="Tilos" id="tilos-logo"> -->
+    <p class="event">The 35th International Conference on Algorithmic
+Learning Theory</p>
+    <p class="date"><span class="day">Feb 25</span>, 2024</p>
+</div>
+<div id="info-column" class="tilos-header-column">
+    <div id="title-and-authors">
+      <h1  id="title" class="title">Distances for Markov Chains, and
+Their Differentiation</h1>
+      <div id="author-info" class="tilos-author-info">
+        <span id="authors" class="tilos-authors">
+            <span class="tilos-author">Tristan
+Brugère</span><span class="tilos-author">Zhengchao
+Wan</span><span class="tilos-author">Yusu Wang</span>
+        </span>
+        <span class="author-separator">&nbsp—&nbsp</span>
+                        <img src="resources/images/logo_hdsi.png" alt="UCSD,
+Halıcıoğlu Data Science Institute" class="tilos-affiliation-logo">
+                      </div>
+    </div>
+    <!-- <p id="sip-topic" class="tilos-sip-topic"> -->
+    <!-- TILOS SIP Topic:  -->
+    <!-- </p> -->
+</div>
+<div id="photo-column">
+    <img src="resources/images/paper_qr.svg" alt="Tristan
+Brugère" class="tilos-photo">
+</div>
+<!--  -->
+</header>
+
+
+<main id="tilos-main">
+<section id="motivation-learning-on-graphs" class="level2">
+<h2>Motivation: Learning on graphs</h2>
+<section id="why-graphs" class="level3">
+<h3>Why graphs</h3>
+<ul>
+<li><p>(labeled) Graphs are everywhere</p>
+<ul>
+<li>Chips (directed, labeled, multigraphs)</li>
+<li>Molecular structures</li>
+<li>Social networks</li>
+</ul></li>
+<li><p>They can have discrete or continuous features</p></li>
+</ul>
+</section>
+<section id="goals" class="level3">
+<h3>Goals</h3>
+<ol type="1">
+<li>Compute statistics on graph datasets;</li>
+<li>Make NNs that output graphs</li>
+</ol>
+</section>
+<section id="typical-problem" class="level3">
+<h3>Typical Problem</h3>
+<p><span class="math display">\[\text{Loss}(G) = ???\]</span></p>
+<p><span class="math display">\[\text{Loss}(G) = d_{\text{graphs}}(G,
+G_{\text{target}})\]</span></p>
+<p><span class="math display">\[d_{\text{graphs}} = ???\]</span></p>
+<p>And we want this loss to be <strong>differentiable wrt. the graph
+structure</strong> — for gradient descent.</p>
+</section>
+</section>
+<section id="challenges" class="level2">
+<h2>Challenges</h2>
+<ul>
+<li>Independent of data representation / node ordering</li>
+</ul>
+<figure>
+<img src="resources/images/graph%20isomorphism.png" style="width:90.0%"
+alt="graph isomorphism" />
+<figcaption aria-hidden="true">graph isomorphism</figcaption>
+</figure>
+<ul>
+<li><p><strong>No Polynomial algorithm</strong> for graph
+isomorphism</p></li>
+<li><p>Graphs are combinatorial objects (<strong>how do we
+differentiate</strong> on the space of graphs?)</p></li>
+</ul>
+</section>
+<section id="related-work" class="level2">
+<h2>Related work</h2>
+<ul>
+<li>Weisfeiler-Lehman (WL) Distance (Chen et al. 2022) <img
+src="resources/images/chenetalillustration.svg" style="width:100.0%"
+alt="Weisfeiler-Lehman (WL) Distance" /></li>
+<li>Optimal Transition Coupling (OTC) Distance (O’Connor et
+al. 2021)</li>
+<li>Fused Gromov-Wasserstein (FGW) Distance (Vayer et al. 2019) <img
+src="resources/images/FGW.png" style="width:100.0%"
+alt="Fused Gromov-Wasserstein (FGW) Distance" /></li>
+</ul>
+</section>
+<section id="our-approach" class="level2">
+<h2>Our approach</h2>
+<section id="compute-distances-on-markov-chains" class="level3">
+<h3>Compute distances on Markov Chains</h3>
+<p><span class="math display">\[\text{(labeled) Graph } \simeq \text{
+(labeled) Markov Chain}\]</span></p>
+<figure>
+<img src="resources/images/graph_to_markov_new.png" style="width:90.0%"
+alt="Graph to markov chain" />
+<figcaption aria-hidden="true">Graph to markov chain</figcaption>
+</figure>
+<ul>
+<li>Random walk gives a <strong>Continuous</strong> representation of
+the combinatiorial object</li>
+<li>Naturally adapted to directed graphs</li>
+<li>Opens <strong>applications to other Markov chains</strong>.</li>
+</ul>
+</section>
+<section id="optimal-transport" class="level3">
+<h3>Optimal Transport</h3>
+<ul>
+<li>Beetwen <strong>distributions</strong></li>
+<li>With a <strong>cost</strong> C between state spaces</li>
+</ul>
+<p><span class="math display">\[d_W (\mu, \nu) = \inf_{(X, Y) \text{
+coupling of } (\mu, \nu)} \E C(X, Y)\]</span></p>
+</section>
+<section id="markovian-couplings" class="level3">
+<h3>Markovian couplings</h3>
+<ul>
+<li><span class="math inline">\((X, Y)\)</span> a coupling between <span
+class="math inline">\((\mu, \nu)\)</span></li>
+<li><span class="math inline">\((X_i, Y_i)_{i\in\N}\)</span> a coupling
+between <span class="math inline">\((\mathcal{X}, \mathcal{Y})\)</span>
+markov chains <img src="./resources/images/classic_random_coupling.svg"
+style="width:100.0%;height:15cm" alt="Classic coupling" /></li>
+</ul>
+</section>
+<section id="formalization" class="level3">
+<h3>Formalization</h3>
+<ul>
+<li><strong>Optimal Transport Markov (OTM) distance</strong> between
+<span class="math inline">\((\mathcal{X}, \mathcal{Y})\)</span> markov
+chains given
+<ul>
+<li><span class="math inline">\(p\)</span> distribution over <span
+class="math inline">\(\N\)</span></li>
+<li><span class="math inline">\(C\)</span> cost function between state
+spaces</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[d_{\mathrm{OTM}}^p(\mathcal{X},
+\mathcal{Y}; C) = \inf_{(X_t, Y_t)_{t\in\N}}\E\, C(X_T,Y_T)\]</span></p>
+</section>
+<section id="interpretation" class="level3">
+<h3>Interpretation</h3>
+<ul>
+<li><strong>Optimal transport on markov couplings</strong>
+<ul>
+<li>Carefully couple the two markov chains</li>
+<li>Look at the expected cost at all steps</li>
+<li>Take the expectation over time (for a certain distribution on
+time)</li>
+</ul></li>
+<li>“Propagate” labels from neighbors to neighbors</li>
+<li>Determine “how different” the label distributions are at each
+step</li>
+</ul>
+</section>
+</section>
+<section id="contributions-i-otm" class="level2">
+<h2>Contributions I: OTM</h2>
+<ul>
+<li><p>Can work with non-stationary Markov chains (adds stability over
+previous Markov-based methods)</p></li>
+<li><p><strong>Theoretical framework</strong></p>
+<ul>
+<li>WL distance: <span class="math inline">\(p\)</span> is the Dirac
+Delta in <span class="math inline">\(k\)</span>.</li>
+<li>OTC distance: is the tight upper bound for OTM distances</li>
+<li><span class="math inline">\(\delta\)</span>-Discounted WL distance p
+is geometric distribution with parameter <span
+class="math inline">\(\delta\)</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="contributions-ii-the-delta-discounted-wl-distance"
+class="level2">
+<h2>Contributions II: The <span
+class="math inline">\(\delta\)</span>-discounted WL distance</h2>
+<p><img src="./resources/images/p_delta_infty.png"
+style="display:float; float:right;margin-top:0;;width:30.0%"
+alt="geometric distribution" /><br />
+</p>
+<ul>
+<li><p>OTM for geometric distributions</p></li>
+<li><p>entropy-regularized version is <strong>Differentiable</strong>
+(In the label values <strong>and</strong> the markov chain
+structure)</p></li>
+<li><p>Computationally <strong>tractable</strong> and
+<strong>stable</strong> (iterative algorithm)</p></li>
+</ul>
+</section>
+<section id="experiments" class="level2">
+<h2>Experiments</h2>
+<section id="synthetic-data-noisy-circle-barycenter" class="level3">
+<h3>Synthetic data: noisy circle barycenter</h3>
+<p>Compute by gradient descent: <span
+class="math display">\[\text{Barycenter}(G_1, G_2, \dots, G_n) =
+\inf_{G} \sum d(G, G_i)^2\]</span></p>
+<div class="figure">
+<div id="barycenter-experiment" class="superfigure">
+<figure>
+<img src="resources/images/noisy_circle.png" style="width:10cm"
+alt="Example noisy graph (ER noise, p=0.01)" />
+<figcaption aria-hidden="true">Example noisy graph (ER noise, <span
+class="math inline">\(p=0.01\)</span>)</figcaption>
+</figure>
+<div class="break">
+
+</div>
+<figure>
+<img src="resources/images/noisy_circle_barycenter.png"
+style="width:10cm"
+alt="Barycenter computed by our distance on 50 such graphs" />
+<figcaption aria-hidden="true">Barycenter computed by our distance on 50
+such graphs</figcaption>
+</figure>
+<figure>
+<img src="resources/images/noisy_circle_barycenter_FGW.png"
+style="width:10cm"
+alt="Barycenter computed by baseline (FGW) on 50 such graphs (non-oriented)" />
+<figcaption aria-hidden="true">Barycenter computed by baseline (FGW) on
+50 such graphs (non-oriented)</figcaption>
+</figure>
+</div>
+<div class="caption">
+<p>Example output of the barycenter experiment on circle graphs with
+Erdős–Rényi noise</p>
+</div>
+</div>
+</section>
+<section id="graph-classification" class="level3">
+<h3>Graph classification</h3>
+<div class="small-table">
+<table style="width:100%;">
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>dataset</strong></th>
+<th><strong>PROTEINS</strong></th>
+<th><strong>PTC_MR</strong></th>
+<th><strong>PROTEINS_full</strong></th>
+<th><strong>ENZYMES</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>classes</strong></td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>6</td>
+</tr>
+<tr class="even">
+<td><strong>attributes</strong></td>
+<td>discrete label</td>
+<td>discrete label</td>
+<td>29</td>
+<td>18</td>
+</tr>
+<tr class="odd">
+<td><strong>FGW 1-NN</strong></td>
+<td><span class="math inline">\(\mathbf{65.1\% \pm 4.6\%}\)</span></td>
+<td><span class="math inline">\(57.6\% \pm 5.0\%\)</span></td>
+<td><span class="math inline">\(69.5\% \pm 4.0\%\)</span></td>
+<td><span class="math inline">\(66.3\% \pm 6.4\%\)</span></td>
+</tr>
+<tr class="even">
+<td><strong><span class="math inline">\(d_{WL,
+\delta}^{(\infty)}\)</span> (<span class="math inline">\(\delta =
+0.2\)</span>) 1-NN</strong></td>
+<td><span class="math inline">\(61.4\% \pm 4.0\%\)</span></td>
+<td><span class="math inline">\(\mathbf{61.3\% \pm 7.6\%}\)</span></td>
+<td><span class="math inline">\(\mathbf{70.0\% \pm 4.5\%}\)</span></td>
+<td><span class="math inline">\(\mathbf{74.7\% \pm 6.2\%}\)</span></td>
+</tr>
+<tr class="odd">
+<td><strong>FGW SVM</strong></td>
+<td><span class="math inline">\(70.5\% \pm 2.9\%\)</span></td>
+<td><span class="math inline">\(57.6\% \pm 4.6\%\)</span></td>
+<td><span class="math inline">\(\mathbf{75.0\% \pm 3.8\%}\)</span></td>
+<td><span class="math inline">\(42.7\% \pm 13.5\%\)</span></td>
+</tr>
+<tr class="even">
+<td><strong><span class="math inline">\(d_{WL,
+\delta}^{(\infty)}\)</span> (<span class="math inline">\(\delta =
+0.2\)</span>) SVM</strong></td>
+<td><span class="math inline">\(\mathbf{76.4\% \pm 5.3\%}\)</span></td>
+<td><span class="math inline">\(\mathbf{61.3\% \pm 5.9\%}\)</span></td>
+<td><span class="math inline">\(73.5\% \pm 3.1\%\)</span></td>
+<td><span class="math inline">\(\mathbf{68.3\% \pm 4.1\%}\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="and-others-in-the-paper" class="level3">
+<h3>And others in the paper</h3>
+</section>
+</section>
+<section id="code-library" class="level2">
+<h2>Code &amp; library</h2>
+<p><a href="https://github.com/YusuLab/ot_markov_distances"><img
+src="https://img.shields.io/badge/YusuLab%2Fot_markov_distances-blue?style=for-the-badge&amp;logo=github"
+style="height:2em" alt="Github link" /></a></p>
+<pre class="console"><code>pip install ot_markov_distances</code></pre>
+</section>
+<section id="future-work-and-acknowledgements" class="level2">
+<h2>Future work and Acknowledgements</h2>
+<section id="future-work" class="level3">
+<h3>Future work</h3>
+<ul>
+<li>Reduce computational complexity</li>
+<li>Ongoing work on generative models for netlists</li>
+</ul>
+</section>
+<section id="acknowledgements" class="level3">
+<h3>Acknowledgements</h3>
+<p>This work is partially supported by NSF under grants CCF-2112665,
+CCF-2217058, and CCF-2310411.</p>
+</section>
+</section>
+</main>
+
+<footer id="tilos-footer">
+    <img src="resources/images/Encore-logo.png" alt="affiliation logos" class="footer-logo">
+    <img src="resources/tilos/tilos-logo.png" alt="affiliation logos" class="footer-logo">
+    <img src="resources/images/logo_hdsi.png" alt="affiliation logos" class="footer-logo">
+  </footer>
+</body>
+</html>

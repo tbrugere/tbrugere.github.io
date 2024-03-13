@@ -1,0 +1,293 @@
+#math-header {
+    display:none;
+}
+
+body {
+    padding-left: 1.90cm;
+    padding-right: 1.90cm;
+    padding-top: 2.15cm;
+    padding-bottom: 0cm;
+    margin: 0;
+    width: 36in;
+    height: 42in;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+}
+
+@page {
+    margin: 0cm;
+    size: 36in 42in;
+}
+
+/*---------------------------------------------------------------------------*/
+/* Header */
+
+header#tilos-header {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 0.21cm solid #C69214;
+    height: 7.5cm;
+    justify-content: space-between;
+    gap: 0.5cm;
+}
+
+#event-info-column{
+    width: 18cm;
+    font-size: 31pt;
+    line-height: 100%;
+    display:flex;
+    flex-direction: column ;
+    justify-content: space-between;
+    align-items: left;
+    padding-bottom: 1em;
+}
+
+#tilos-logo{
+    width: 12.80cm;
+}
+
+#event-info-column p{
+    margin: 0;
+    font-family: "Trebuchet MS", sans-serif;
+}
+
+#info-column{
+    position: relative;
+    /* display: flex; */
+    /* flex-direction: column; */
+    font-size: 35pt;
+    width:100%;
+    justify-content: end;
+    margin-bottom:1cm;
+    /* gap:0.5cm; */
+    flex-grow: 2
+    /* align-items: center; */
+    /* flex-grow: 2; */
+}
+
+h1#title {
+    font-size: 2cm;
+    font-weight:bold;
+    text-align: center;
+    /* text-decoration: underline; */
+    /* border-bottom: 1px solid grey; */
+    /* line-height: 170%; */
+    /* margin: 2cm; */
+    margin-top: 0;
+    /* margin-bottom: 1cm; */
+    font-weight: normal;
+
+    font-family: sans-serif;
+}
+
+#title-and-authors{
+    position:relative;
+    top: 0;
+    left:0;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#author-info{
+    font-family: Arial, sans-serif;
+    /* width: 100%; */
+    /* flex- */
+    text-align: center;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.tilos-affiliation-logo{
+    max-width:12cm;
+}
+
+#sip-topic{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin:0;
+    font-family: "times new roman", serif;
+    text-align: right;
+    flex-basis: max-content;
+    flex-shrink: 1;
+    flex-grow: 0;
+}
+
+#photo-column{
+    width: 9cm;
+    padding-bottom: 1cm;
+    
+}
+#photo-column img{
+    max-width: 100%;
+    max-height: 100%;
+    height:100%
+}
+
+.day {
+    font-family: Arial, Helvetica, sans-serif;
+    /* color: #22228A; */
+}
+
+.tilos-author:first-child{
+    text-decoration: underline;
+}
+
+span.tilos-author + span.tilos-author::before {
+    content: ", ";
+}
+
+/*---------------------------------------------------------------------------*/
+/* Main content*/
+
+
+main#tilos-main{
+    height: 100%;
+    /* display: grid; */
+    /* grid-template-columns: 1fr 1fr 1fr; */
+    display: flex;
+    min-height: 0;
+    flex-shrink:1;
+    flex-direction: column;
+    flex-wrap: wrap;
+    font-size: 30pt;
+    font-family: Arial, sans-serif;
+    align-items: center;
+    justify-content: start;
+}
+
+#tilos-main > section{
+    margin: 0.5cm;
+    border: 1px solid #00629B;
+    padding: 0.5cm;
+    width: 30%;
+    flex-grow: 0;
+    box-shadow: .2cm .2cm 0.2cm 0.2cm #B6B1A9;
+}
+
+#tilos-main img{
+    margin-right:auto;
+    margin-left:auto;
+}
+
+
+#tilos-main h2 {
+    font-size: 40pt;
+    margin-top: 0;
+    margin-bottom: 0.7em;
+    color: #182B49;
+    /* text-decoration: underline; */
+    border-bottom: 1px solid #C69214;
+}
+
+#tilos-main h3 {
+    font-size: 32pt;
+    margin-bottom: .5em;
+}
+
+/*just squishing stuff together a bit*/ 
+#tilos-main p {
+    margin-top: 1em;
+    margin-bottom: 0em;
+}
+
+#tilos-main :is(h3, h2)+p {
+    margin-top: 0em;
+}
+
+#tilos-main ul{
+    margin-top: 0;
+    margin-bottom:0;
+}
+
+#tilos-main li > p {
+    margin-bottom: 0em;
+    margin-top: 1em;
+}
+#tilos-main li:first-child > p {
+    margin-bottom: 0em;
+    margin-top: 0em;
+}
+/*end of squishing stuff together*/ 
+
+#tilos-main :is(figure, .figure){
+    margin: 0;
+    padding: 10px;
+    border: 1px solid #808080;
+}
+
+#tilos-main :is(figure, .figure) *{
+    margin: auto;
+    text-align: center;
+}
+
+#tilos-main .superfigure{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#tilos-main .superfigure > :is(figure, .figure){
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #A0A0A0;
+    /* width: min-content; */
+    width: auto;
+    flex-basis: min-content;
+    max-width: max-content;
+    flex-grow:1;
+    font-size: .9em;
+}
+
+.break{
+    flex-basis: 100%;
+    height: 0;
+}
+
+#tilos-main :is(figure, .figure) img{
+    display: block;
+}
+
+.small-table{
+    font-size: .6em;
+    table{
+        border-collapse:collapse;
+        border: 1px solid black;
+        th,td { border: 1px solid black; }
+        th{
+            text-align:left;
+        }
+    }
+
+}
+
+
+/*---------------------------------------------------------------------------*/
+/* Footer */
+
+footer#tilos-footer {
+    display: flex;
+    flex-direction: row;
+    height: 1.7cm;
+    justify-content: right;
+    gap: 2cm;
+    /* background-color: #182B49; */
+}
+
+
+.footer-logo{
+    height: 100%
+}
+
+#uni-logo{
+    height: 100%
+}
