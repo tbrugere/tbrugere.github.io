@@ -1,0 +1,162 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>autocommit.build_ragdb &mdash; autocommit 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="autocommit.commands" href="autocommit.commands.html" />
+    <link rel="prev" title="autocommit" href="autocommit.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            autocommit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Autocommit: automatically write commit messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../context.html">Adding context to commit messages</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="autocommit.html">autocommit</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.run_argument_parser"><code class="docutils literal notranslate"><span class="pre">run_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.setup_argument_parser"><code class="docutils literal notranslate"><span class="pre">setup_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.cleanup_argument_parser"><code class="docutils literal notranslate"><span class="pre">cleanup_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.build_ragdb_argument_parser"><code class="docutils literal notranslate"><span class="pre">build_ragdb_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.git_prepare_commit_msg_argument_parser"><code class="docutils literal notranslate"><span class="pre">git_prepare_commit_msg_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.git_post_commit_argument_parser"><code class="docutils literal notranslate"><span class="pre">git_post_commit_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.argument_parser"><code class="docutils literal notranslate"><span class="pre">argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.configure_logging"><code class="docutils literal notranslate"><span class="pre">configure_logging()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.generate_commit_message"><code class="docutils literal notranslate"><span class="pre">generate_commit_message()</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">autocommit.build_ragdb</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.build_ragdb.get_project_ragdb"><code class="docutils literal notranslate"><span class="pre">get_project_ragdb()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.build_ragdb.build_ragdb"><code class="docutils literal notranslate"><span class="pre">build_ragdb()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.commands.html">autocommit.commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.config.html">autocommit.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.git_hooks.html">autocommit.git_hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.mistral_model.html">autocommit.mistral_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.setup.html">autocommit.setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.utils.html">autocommit.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basic_rag.html">basic_rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mistral_tools.html">mistral_tools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">autocommit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="autocommit.html">autocommit</a></li>
+      <li class="breadcrumb-item active">autocommit.build_ragdb</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/autocommit.build_ragdb.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-autocommit.build_ragdb">
+<span id="autocommit-build-ragdb"></span><h1>autocommit.build_ragdb<a class="headerlink" href="#module-autocommit.build_ragdb" title="Link to this heading"></a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.build_ragdb.build_ragdb" title="autocommit.build_ragdb.build_ragdb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_ragdb</span></code></a>(api_key, repo_path_str[, update])</p></td>
+<td><p>Build or update the RAG database for the repository</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.build_ragdb.get_project_ragdb" title="autocommit.build_ragdb.get_project_ragdb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_project_ragdb</span></code></a>(repo_path[, rate_limit, ...])</p></td>
+<td><p>Get the RAG database from the <code class="docutils literal notranslate"><span class="pre">.autocommit_storage_dir</span></code> directory</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.build_ragdb.get_project_ragdb">
+<span class="sig-prename descclassname"><span class="pre">autocommit.build_ragdb.</span></span><span class="sig-name descname"><span class="pre">get_project_ragdb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_if_exists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/build_ragdb.html#get_project_ragdb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.build_ragdb.get_project_ragdb" title="Link to this definition"></a></dt>
+<dd><p>Get the RAG database from the <code class="docutils literal notranslate"><span class="pre">.autocommit_storage_dir</span></code> directory</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.build_ragdb.build_ragdb">
+<span class="sig-prename descclassname"><span class="pre">autocommit.build_ragdb.</span></span><span class="sig-name descname"><span class="pre">build_ragdb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_path_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/build_ragdb.html#build_ragdb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.build_ragdb.build_ragdb" title="Link to this definition"></a></dt>
+<dd><p>Build or update the RAG database for the repository</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="autocommit.html" class="btn btn-neutral float-left" title="autocommit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="autocommit.commands.html" class="btn btn-neutral float-right" title="autocommit.commands" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

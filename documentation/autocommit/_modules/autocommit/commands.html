@@ -1,0 +1,379 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>autocommit.commands &mdash; autocommit 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            autocommit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Autocommit: automatically write commit messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../context.html">Adding context to commit messages</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/autocommit.html">autocommit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/basic_rag.html">basic_rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/mistral_tools.html">mistral_tools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">autocommit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../autocommit.html">autocommit</a></li>
+      <li class="breadcrumb-item active">autocommit.commands</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for autocommit.commands</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span><span class="p">,</span> <span class="n">TextIOWrapper</span>
+<span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">dedent</span>
+
+<span class="kn">from</span> <span class="nn">pygit2</span> <span class="kn">import</span> <span class="n">Blob</span><span class="p">,</span> <span class="n">Commit</span><span class="p">,</span> <span class="n">Patch</span><span class="p">,</span> <span class="n">Oid</span><span class="p">,</span> <span class="n">Tree</span>
+<span class="kn">from</span> <span class="nn">pygit2.blob</span> <span class="kn">import</span> <span class="n">BlobIO</span>
+<span class="kn">from</span> <span class="nn">pygit2.enums</span> <span class="kn">import</span> <span class="n">FileStatus</span><span class="p">,</span> <span class="n">ObjectType</span>
+<span class="kn">from</span> <span class="nn">pygit2.index</span> <span class="kn">import</span> <span class="n">Index</span>
+<span class="kn">from</span> <span class="nn">pygit2.repository</span> <span class="kn">import</span> <span class="n">Repository</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span> <span class="n">FileIsBinaryReturnableError</span><span class="p">,</span> <span class="n">FileNotFoundReturnableError</span><span class="p">,</span> 
+                    <span class="n">FileUnchangedError</span><span class="p">,</span> <span class="n">FileNewError</span><span class="p">,</span> <span class="n">walk_tree</span><span class="p">,</span> <span class="n">compute_truncation</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">mistral_tools.tool_register</span> <span class="kn">import</span> <span class="n">CommandRegister</span>
+
+<span class="n">commands</span> <span class="o">=</span> <span class="n">CommandRegister</span><span class="p">(</span><span class="n">bindable_parameters</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;repository&quot;</span><span class="p">,))</span>
+
+
+<div class="viewcode-block" id="print_file">
+<a class="viewcode-back" href="../../_autosummary/autocommit.commands.html#autocommit.commands.print_file">[docs]</a>
+<span class="nd">@commands</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Print the contents of the file&quot;</span><span class="p">,</span> 
+        <span class="n">parameter_descriptions</span><span class="o">=</span><span class="p">{</span>
+           <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="s2">&quot;The file to print&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;start_line&quot;</span><span class="p">:</span> <span class="s2">&quot;print from this line&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;num_lines&quot;</span><span class="p">:</span> <span class="s2">&quot;the maximum number of lines to print (set to 0 to print all)&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;staged&quot;</span><span class="p">:</span> <span class="s2">&quot;whether to print the new version of the file is available&quot;</span>
+<span class="p">})</span>
+<span class="k">def</span> <span class="nf">print_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start_line</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_lines</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">staged</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+               <span class="n">repository</span><span class="p">:</span> <span class="n">Repository</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print the contents of the file.</span>
+
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        this command does not actually read anything from the working directory, </span>
+<span class="sd">        only from git objects and the staging area.</span>
+<span class="sd">        This is mainly for security reasons (we do not want to give the LLM access </span>
+<span class="sd">        to the filesystem).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file (str): The file to print</span>
+<span class="sd">        start_line (int, optional): The starting line. Defaults to 0.</span>
+<span class="sd">        num_lines (int, optional): The number of lines to print. Defaults to 20.</span>
+<span class="sd">        staged (bool, optional): Whether to print the staged version of the file </span>
+<span class="sd">        if available. Defaults to True. If False, or if the file </span>
+<span class="sd">        is not in the staging area, the latest tracked version is used.</span>
+<span class="sd">        repository (Repository): The current git repository</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">object_id</span><span class="p">:</span> <span class="n">Oid</span><span class="o">|</span><span class="kc">None</span><span class="o">=</span> <span class="kc">None</span> <span class="c1"># git object id for the file we are looking for</span>
+
+    <span class="k">if</span> <span class="n">staged</span><span class="p">:</span>
+        <span class="n">index</span><span class="p">:</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">index</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span>
+            <span class="n">object_id</span> <span class="o">=</span> <span class="n">index</span><span class="p">[</span><span class="n">file</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
+
+    <span class="k">if</span> <span class="n">object_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">head_commit</span><span class="p">:</span> <span class="n">Commit</span><span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">peel</span><span class="p">(</span><span class="n">ObjectType</span><span class="o">.</span><span class="n">COMMIT</span><span class="p">)</span>
+        <span class="n">tree</span><span class="p">:</span> <span class="n">Tree</span> <span class="o">=</span> <span class="n">head_commit</span><span class="o">.</span><span class="n">tree</span>
+        <span class="k">if</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">tree</span><span class="p">:</span>
+            <span class="n">object_id</span> <span class="o">=</span> <span class="n">tree</span><span class="p">[</span><span class="n">file</span><span class="p">]</span><span class="o">.</span><span class="n">id</span>
+
+    <span class="k">if</span> <span class="n">object_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FileNotFoundReturnableError</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="n">blob</span> <span class="o">=</span> <span class="n">repository</span><span class="p">[</span><span class="n">object_id</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span> <span class="n">Blob</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">blob</span><span class="o">.</span><span class="n">is_binary</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FileIsBinaryReturnableError</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="n">end_line</span> <span class="o">=</span> <span class="n">start_line</span> <span class="o">+</span> <span class="n">num_lines</span> <span class="k">if</span> <span class="n">num_lines</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">return_data</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">BlobIO</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span> <span class="n">as_path</span><span class="o">=</span><span class="s2">&quot;file&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="c1"># decode the binary output to text (using default system encoding)</span>
+        <span class="n">f_text</span> <span class="o">=</span> <span class="n">TextIOWrapper</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f_text</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">start_line</span><span class="p">:</span>
+                <span class="n">return_data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">end_line</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">end_line</span><span class="p">:</span>
+                <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">return_data</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ls_files">
+<a class="viewcode-back" href="../../_autosummary/autocommit.commands.html#autocommit.commands.ls_files">[docs]</a>
+<span class="nd">@commands</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;List files in the repository&quot;</span><span class="p">,</span>
+                   <span class="n">parameter_descriptions</span><span class="o">=</span><span class="p">{</span>
+                       <span class="s2">&quot;indicate_changes&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to indicate changes in the files&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;only_changed&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to only list files that have changes&quot;</span><span class="p">,</span>
+                       <span class="p">})</span>
+<span class="k">def</span> <span class="nf">ls_files</span><span class="p">(</span><span class="n">indicate_changes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">only_changed</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> 
+             <span class="n">repository</span><span class="p">:</span> <span class="n">Repository</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List all files in the repository</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        indicate_changes (bool, optional): Whether to indicate changes in the files. </span>
+<span class="sd">        only_changed (bool, optional): Whether to only list files that have changes.</span>
+<span class="sd">        repository (Repository): The current git repository</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[str]: A list of all files in the repository</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">untracked_files</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+    <span class="n">status_files</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">status</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">peel</span><span class="p">(</span><span class="n">ObjectType</span><span class="o">.</span><span class="n">COMMIT</span><span class="p">)</span><span class="o">.</span><span class="n">tree</span>
+    <span class="n">tree_files</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">walk_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">)}</span>
+
+    <span class="n">all_files</span> <span class="o">=</span> <span class="n">status_files</span> <span class="o">|</span> <span class="n">tree_files</span>
+
+    <span class="n">return_data</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">all_files</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">only_changed</span> <span class="ow">and</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="n">return_data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">indicate_changes</span> <span class="ow">and</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span>
+            <span class="c1"># libgit2 does not provide a way to say which file was renamed from which</span>
+            <span class="c1"># (from the status, although one could use diff to find out)</span>
+            <span class="c1"># (and generally denotes renames as a deletion and an addition)</span>
+            <span class="c1"># TODO: we could match up the SHA1s of the blobs to find renames, </span>
+            <span class="c1"># or use Diff.find_similar()</span>
+            <span class="n">stat</span> <span class="o">=</span> <span class="n">status</span><span class="p">[</span><span class="n">file</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">stat</span> <span class="o">&amp;</span> <span class="n">FileStatus</span><span class="o">.</span><span class="n">INDEX_NEW</span><span class="p">:</span>
+                <span class="n">return_data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; (NEW)&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">stat</span> <span class="o">&amp;</span> <span class="n">FileStatus</span><span class="o">.</span><span class="n">INDEX_MODIFIED</span><span class="p">:</span>
+                <span class="n">return_data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; (MODIFIED)&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">stat</span> <span class="o">&amp;</span> <span class="n">FileStatus</span><span class="o">.</span><span class="n">INDEX_DELETED</span><span class="p">:</span>
+                <span class="n">return_data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; (DELETED)&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">stat</span> <span class="o">&amp;</span> <span class="n">FileStatus</span><span class="o">.</span><span class="n">INDEX_RENAMED</span><span class="p">:</span>
+                <span class="n">return_data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot; (RENAMED)&quot;</span><span class="p">)</span>
+        <span class="n">return_data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">return_data</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="diff_file">
+<a class="viewcode-back" href="../../_autosummary/autocommit.commands.html#autocommit.commands.diff_file">[docs]</a>
+<span class="nd">@commands</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Print the diff between the staged version of the file and the head&quot;</span><span class="p">,</span>
+    <span class="n">parameter_descriptions</span><span class="o">=</span><span class="p">{</span>
+       <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="s2">&quot;The file to print the diff of&quot;</span><span class="p">,</span>
+       <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="s2">&quot;The number of lines of context to print&quot;</span><span class="p">,</span>
+<span class="p">})</span>
+<span class="k">def</span> <span class="nf">diff_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">repository</span><span class="p">:</span> <span class="n">Repository</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print the diff between the staged version of the file and the head</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file (str): The file to print the diff of</span>
+<span class="sd">        context (int, optional): The number of lines of context to print. Defaults to 5.</span>
+<span class="sd">        repository (Repository): The current git repository</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#TODO: smart context using tree-sitter</span>
+    <span class="c1"># to be able to say &quot;in function x, in class y, ...&quot;</span>
+
+
+    <span class="n">index</span><span class="p">:</span> <span class="n">Index</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">peel</span><span class="p">(</span><span class="n">ObjectType</span><span class="o">.</span><span class="n">COMMIT</span><span class="p">)</span><span class="o">.</span><span class="n">tree</span>
+
+    <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">index</span> <span class="ow">and</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tree</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FileNotFoundReturnableError</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FileUnchangedError</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tree</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FileNewError</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="n">blob_old</span> <span class="o">=</span> <span class="n">tree</span><span class="p">[</span><span class="n">file</span><span class="p">]</span>
+    <span class="n">blob_new</span> <span class="o">=</span> <span class="n">repository</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="n">file</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">blob_old</span><span class="p">,</span> <span class="n">Blob</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">blob_new</span><span class="p">,</span> <span class="n">Blob</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">blob_old</span><span class="o">.</span><span class="n">is_binary</span> <span class="ow">or</span> <span class="n">blob_new</span><span class="o">.</span><span class="n">is_binary</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FileIsBinaryReturnableError</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="n">patch</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span>
+            <span class="n">blob_old</span><span class="p">,</span>
+            <span class="n">blob_new</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> 
+            <span class="n">context_lines</span><span class="o">=</span><span class="n">context</span><span class="p">,</span> <span class="n">interhunk_lines</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">patch</span><span class="p">,</span> <span class="n">Patch</span><span class="p">)</span>
+
+    <span class="c1">##### for some reason, libgit2 loses the file name when doing the diff</span>
+    <span class="c1">##### so we have to manually add it back in</span>
+    <span class="n">patch_text</span> <span class="o">=</span> <span class="n">patch</span><span class="o">.</span><span class="n">text</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">patch_text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="n">patch_text_lines</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">patch_text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
+    <span class="n">edited_text</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">patch_text_lines</span><span class="p">)</span> <span class="c1"># skip the first line</span>
+    <span class="n">edited_text</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;diff --git a/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> b/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">edited_text</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">patch_text_lines</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># write the line with &quot;index ...&quot;</span>
+    <span class="nb">next</span><span class="p">(</span><span class="n">patch_text_lines</span><span class="p">)</span> <span class="c1"># skip the line with &quot;---&quot;</span>
+    <span class="nb">next</span><span class="p">(</span><span class="n">patch_text_lines</span><span class="p">)</span> <span class="c1"># skip the line with &quot;+++&quot;</span>
+    <span class="n">edited_text</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">        --- a/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span>
+<span class="s2">        +++ b/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">patch_text_lines</span><span class="p">:</span> <span class="n">edited_text</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">edited_text</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="diff_all_files">
+<a class="viewcode-back" href="../../_autosummary/autocommit.commands.html#autocommit.commands.diff_all_files">[docs]</a>
+<span class="k">def</span> <span class="nf">diff_all_files</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">repository</span><span class="p">:</span> <span class="n">Repository</span><span class="p">,</span> <span class="n">max_content_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> 
+                   <span class="n">max_total_size</span><span class="o">=</span><span class="mi">90_000</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print the diff between the staged version and the head for all modified files</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        context (int, optional): The number of lines of context to print. Defaults to 5.</span>
+<span class="sd">        repository (Repository): The current git repository</span>
+<span class="sd">        max_content_size (int, optional): The maximum size of the content to print </span>
+<span class="sd">            for one file</span>
+<span class="sd">        max_total_size (int, optional): The maximum total size of the content to print</span>
+<span class="sd">            if True, we automatically cut off the largest files to fit in this size</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">untracked_files</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+    <span class="n">status_files</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">status</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">peel</span><span class="p">(</span><span class="n">ObjectType</span><span class="o">.</span><span class="n">COMMIT</span><span class="p">)</span><span class="o">.</span><span class="n">tree</span>
+    <span class="n">tree_files</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">walk_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">)}</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">repository</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">index</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">all_files</span> <span class="o">=</span> <span class="n">status_files</span> <span class="o">|</span> <span class="n">tree_files</span>
+
+
+    <span class="n">all_file_info</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">all_files</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="n">stat</span> <span class="o">=</span> <span class="n">status</span><span class="p">[</span><span class="n">file</span><span class="p">]</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">status_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">stat</span> <span class="o">&amp;</span> <span class="n">FileStatus</span><span class="o">.</span><span class="n">INDEX_NEW</span><span class="p">:</span>
+            <span class="n">status_text</span> <span class="o">=</span> <span class="s2">&quot; (NEW)&quot;</span>
+            <span class="k">try</span><span class="p">:</span> <span class="n">content</span> <span class="o">=</span> <span class="n">repository</span><span class="p">[</span><span class="n">index</span><span class="p">[</span><span class="n">file</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span> <span class="k">continue</span> <span class="c1"># skip binary files</span>
+        <span class="k">if</span> <span class="n">stat</span> <span class="o">&amp;</span> <span class="n">FileStatus</span><span class="o">.</span><span class="n">INDEX_MODIFIED</span><span class="p">:</span>
+            <span class="n">status_text</span> <span class="o">=</span> <span class="s2">&quot; (MODIFIED)&quot;</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">diff_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span> <span class="n">repository</span><span class="o">=</span><span class="n">repository</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">content</span> <span class="o">=</span> <span class="s2">&quot;Binary file, cannot display diff</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">stat</span> <span class="o">&amp;</span> <span class="n">FileStatus</span><span class="o">.</span><span class="n">INDEX_DELETED</span><span class="p">:</span>
+            <span class="n">status_text</span> <span class="o">=</span> <span class="s2">&quot; (DELETED)&quot;</span>
+        <span class="k">if</span> <span class="n">stat</span> <span class="o">&amp;</span> <span class="n">FileStatus</span><span class="o">.</span><span class="n">INDEX_RENAMED</span><span class="p">:</span>
+            <span class="n">status_text</span> <span class="o">=</span> <span class="s2">&quot; (RENAMED)&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">status_text</span><span class="p">:</span> <span class="k">continue</span>
+
+        <span class="n">file_info</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+
+        <span class="n">file_info</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;------------ </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">status_text</span><span class="si">}</span><span class="s2">------------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">content</span><span class="p">:</span> 
+            <span class="n">content</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">max_content_size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span>  <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_content_size</span><span class="p">:</span> 
+                <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="p">[:</span><span class="n">max_content_size</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[...]</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">file_info</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">file_info</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">all_file_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_info</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+
+    <span class="n">all_file_info_len</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_file_info</span><span class="p">]</span>
+    <span class="n">truncation</span> <span class="o">=</span> <span class="n">compute_truncation</span><span class="p">(</span><span class="n">all_file_info_len</span><span class="p">,</span> <span class="n">max_total_size</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">truncate</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">s</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">t</span><span class="p">:</span> <span class="k">return</span> <span class="n">s</span>
+        <span class="n">truncated_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">[...]</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">s</span><span class="p">[:</span><span class="n">t</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">truncated_str</span><span class="p">)]</span> <span class="o">+</span> <span class="n">truncated_str</span>
+    <span class="k">if</span> <span class="n">truncation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">all_file_info</span> <span class="o">=</span> <span class="p">[</span><span class="n">truncate</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">truncation</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_file_info</span><span class="p">]</span>
+
+    <span class="n">return_data</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">file_info</span> <span class="ow">in</span> <span class="n">all_file_info</span><span class="p">:</span>
+        <span class="n">return_data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_info</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">return_data</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

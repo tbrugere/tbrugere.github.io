@@ -1,0 +1,354 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mistral_tools.tool_register &mdash; autocommit 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mistral_tools.utils" href="mistral_tools.utils.html" />
+    <link rel="prev" title="mistral_tools.embeddings" href="mistral_tools.embeddings.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            autocommit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Autocommit: automatically write commit messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../context.html">Adding context to commit messages</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="autocommit.html">autocommit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_rag.html">basic_rag</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="mistral_tools.html">mistral_tools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mistral_tools.conversation.html">mistral_tools.conversation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mistral_tools.embeddings.html">mistral_tools.embeddings</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">mistral_tools.tool_register</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mistral_tools.tool_register.ReturnableError"><code class="docutils literal notranslate"><span class="pre">ReturnableError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mistral_tools.tool_register.ParameterError"><code class="docutils literal notranslate"><span class="pre">ParameterError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mistral_tools.tool_register.Parameter"><code class="docutils literal notranslate"><span class="pre">Parameter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mistral_tools.tool_register.Parameter.to_json"><code class="docutils literal notranslate"><span class="pre">Parameter.to_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mistral_tools.tool_register.Command"><code class="docutils literal notranslate"><span class="pre">Command</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mistral_tools.tool_register.Command.parameters_to_json"><code class="docutils literal notranslate"><span class="pre">Command.parameters_to_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mistral_tools.tool_register.Command.to_json"><code class="docutils literal notranslate"><span class="pre">Command.to_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mistral_tools.tool_register.CommandRegister"><code class="docutils literal notranslate"><span class="pre">CommandRegister</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mistral_tools.tool_register.CommandRegister.register"><code class="docutils literal notranslate"><span class="pre">CommandRegister.register()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mistral_tools.tool_register.CommandRegister.parameter_of_inspected"><code class="docutils literal notranslate"><span class="pre">CommandRegister.parameter_of_inspected()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mistral_tools.tool_register.CommandRegister.to_json"><code class="docutils literal notranslate"><span class="pre">CommandRegister.to_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mistral_tools.tool_register.CommandRegister.bind"><code class="docutils literal notranslate"><span class="pre">CommandRegister.bind()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mistral_tools.tool_register.BoundCommandRegister"><code class="docutils literal notranslate"><span class="pre">BoundCommandRegister</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mistral_tools.tool_register.BoundCommandRegister.bind_command"><code class="docutils literal notranslate"><span class="pre">BoundCommandRegister.bind_command()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mistral_tools.tool_register.BoundCommandRegister.bind_parameters"><code class="docutils literal notranslate"><span class="pre">BoundCommandRegister.bind_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mistral_tools.tool_register.BoundCommandRegister.check_parameters"><code class="docutils literal notranslate"><span class="pre">BoundCommandRegister.check_parameters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mistral_tools.tool_register.BoundCommandRegister.to_json"><code class="docutils literal notranslate"><span class="pre">BoundCommandRegister.to_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mistral_tools.tool_register.BoundCommandRegister.handle_returnable_error"><code class="docutils literal notranslate"><span class="pre">BoundCommandRegister.handle_returnable_error()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="mistral_tools.utils.html">mistral_tools.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">autocommit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="mistral_tools.html">mistral_tools</a></li>
+      <li class="breadcrumb-item active">mistral_tools.tool_register</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/mistral_tools.tool_register.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mistral_tools.tool_register">
+<span id="mistral-tools-tool-register"></span><h1>mistral_tools.tool_register<a class="headerlink" href="#module-mistral_tools.tool_register" title="Link to this heading"></a></h1>
+<p>Registering and binding commands (tools)</p>
+<p>The classes that follow are intended to automate usage of the
+Mistral tool/function calling api
+(see <a class="reference external" href="https://docs.mistral.ai/capabilities/function_calling/">https://docs.mistral.ai/capabilities/function_calling/</a>)</p>
+<p>It includes</p>
+<ul class="simple">
+<li><p>Automatic generation of the json representation of the tools</p></li>
+<li><dl class="simple">
+<dt>Binding of parameters (to handle local state.</dt><dd><p>For example in this codebase, the git repository is passed as a bound parameter)</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mistral_tools.tool_register.BoundCommandRegister" title="mistral_tools.tool_register.BoundCommandRegister"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BoundCommandRegister</span></code></a>(command_register, ...)</p></td>
+<td><p>A command register with bound parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mistral_tools.tool_register.Command" title="mistral_tools.tool_register.Command"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Command</span></code></a>(name, function, parameters, ...)</p></td>
+<td><p>A command that can be called by the LLM</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mistral_tools.tool_register.CommandRegister" title="mistral_tools.tool_register.CommandRegister"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CommandRegister</span></code></a>(bindable_parameters)</p></td>
+<td><p>The main class for registering commands / tools that can be called by the LLM</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mistral_tools.tool_register.Parameter" title="mistral_tools.tool_register.Parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Parameter</span></code></a>(name, type, description, optional)</p></td>
+<td><p>A parameter of a command</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#mistral_tools.tool_register.ParameterError" title="mistral_tools.tool_register.ParameterError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParameterError</span></code></a>(message)</p></td>
+<td><p>Returned by the tool calls if a parameter is incorrect</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#mistral_tools.tool_register.ReturnableError" title="mistral_tools.tool_register.ReturnableError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReturnableError</span></code></a>(error_type, message)</p></td>
+<td><p>An error message that can be returned by a function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.ReturnableError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mistral_tools.tool_register.</span></span><span class="sig-name descname"><span class="pre">ReturnableError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#ReturnableError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.ReturnableError" title="Link to this definition"></a></dt>
+<dd><p>An error message that can be returned by a function</p>
+<p>and converted to a string (to be sent to the LLM)</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.ParameterError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mistral_tools.tool_register.</span></span><span class="sig-name descname"><span class="pre">ParameterError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#ParameterError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.ParameterError" title="Link to this definition"></a></dt>
+<dd><p>Returned by the tool calls if a parameter is incorrect</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.Parameter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mistral_tools.tool_register.</span></span><span class="sig-name descname"><span class="pre">Parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#Parameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.Parameter" title="Link to this definition"></a></dt>
+<dd><p>A parameter of a command</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.Parameter.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#Parameter.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.Parameter.to_json" title="Link to this definition"></a></dt>
+<dd><p>Convert the parameter to Mistral api json representation</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.Command">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mistral_tools.tool_register.</span></span><span class="sig-name descname"><span class="pre">Command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#mistral_tools.tool_register.Parameter" title="mistral_tools.tool_register.Parameter"><span class="pre">Parameter</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bindable_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#Command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.Command" title="Link to this definition"></a></dt>
+<dd><p>A command that can be called by the LLM</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.Command.parameters_to_json">
+<span class="sig-name descname"><span class="pre">parameters_to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#Command.parameters_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.Command.parameters_to_json" title="Link to this definition"></a></dt>
+<dd><p>Convert the parameters to Mistral api json representation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.Command.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#Command.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.Command.to_json" title="Link to this definition"></a></dt>
+<dd><p>Convert the command to Mistral api json representation</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.CommandRegister">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mistral_tools.tool_register.</span></span><span class="sig-name descname"><span class="pre">CommandRegister</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bindable_parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#CommandRegister"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.CommandRegister" title="Link to this definition"></a></dt>
+<dd><p>The main class for registering commands / tools that can be called by the LLM</p>
+<p>To add a command, use the <cite>register</cite> decorator.</p>
+<p>To generate the json representation of the commands, use the <cite>to_json</cite> method.
+It will ignore the bindable parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bindable_parameters</strong> (<em>set</em><em>[</em><em>str</em><em>]</em>) – The parameters that can be bound to a value
+locally (as opposed to being passed by the LLM)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.CommandRegister.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_descriptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#CommandRegister.register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.CommandRegister.register" title="Link to this definition"></a></dt>
+<dd><p>Decorator to register a command</p>
+<p>All parameters of the function should be decorated with a type among
+<code class="docutils literal notranslate"><span class="pre">str</span></code>, <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">bool</span></code> (except for the bindable parameters).
+This function will use the type annotations to generate the
+json representation of the command.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – The description of the command. Defaults to “”.</p></li>
+<li><p><strong>parameter_descriptions</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – The descriptions of</p></li>
+<li><p><strong>command</strong> (<em>the parameters. Defaults to &quot;&quot; for every</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<p>:param :
+:param but you should really change that.:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.CommandRegister.parameter_of_inspected">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameter_of_inspected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">descriptions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#mistral_tools.tool_register.Parameter" title="mistral_tools.tool_register.Parameter"><span class="pre">Parameter</span></a></span></span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#CommandRegister.parameter_of_inspected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.CommandRegister.parameter_of_inspected" title="Link to this definition"></a></dt>
+<dd><p>Generate a <code class="xref py py-class docutils literal notranslate"><span class="pre">parameter</span></code> from inspecting a functions’s parameters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.CommandRegister.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ToolTypedDict</span></span></span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#CommandRegister.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.CommandRegister.to_json" title="Link to this definition"></a></dt>
+<dd><p>Generate the json representation of the commands.</p>
+<p>This can be passed directly as the tools parameters to
+<code class="xref py py-func docutils literal notranslate"><span class="pre">Mistral.chat.complete()</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.CommandRegister.bind">
+<span class="sig-name descname"><span class="pre">bind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">bound_parameters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#CommandRegister.bind"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.CommandRegister.bind" title="Link to this definition"></a></dt>
+<dd><p>Bind the parameters to the commands.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**bound_parameters</strong> – The parameters to bind</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A bound version of the command register.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#mistral_tools.tool_register.BoundCommandRegister" title="mistral_tools.tool_register.BoundCommandRegister">BoundCommandRegister</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.BoundCommandRegister">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mistral_tools.tool_register.</span></span><span class="sig-name descname"><span class="pre">BoundCommandRegister</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command_register</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mistral_tools.tool_register.CommandRegister" title="mistral_tools.tool_register.CommandRegister"><span class="pre">CommandRegister</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">object</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#BoundCommandRegister"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.BoundCommandRegister" title="Link to this definition"></a></dt>
+<dd><p>A command register with bound parameters.</p>
+<p>This object behaves like the BoundCommandRegister,
+except bound commands can be accessed with the getitem operator like so:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">commands</span> <span class="o">=</span> <span class="n">CommandRegister</span><span class="p">(</span><span class="n">bindable_parameters</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;df&quot;</span><span class="p">,))</span>
+
+<span class="nd">@commands</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Get payment status of a transaction&quot;</span><span class="p">,</span>
+        <span class="n">parameter_descriptions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;transaction_id&quot;</span><span class="p">:</span> <span class="s2">&quot;The transaction id.&quot;</span><span class="p">,})</span>
+<span class="k">def</span> <span class="nf">retrieve_payment_status</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="n">transaction_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="o">...</span>
+
+<span class="n">bound_commands</span> <span class="o">=</span> <span class="n">commands</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">bound_commands</span><span class="p">[</span><span class="s2">&quot;retrieve_payment_status&quot;</span><span class="p">](</span><span class="n">transaction_id</span><span class="o">=</span><span class="s2">&quot;1234&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.BoundCommandRegister.bind_command">
+<span class="sig-name descname"><span class="pre">bind_command</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mistral_tools.tool_register.Command" title="mistral_tools.tool_register.Command"><span class="pre">Command</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#BoundCommandRegister.bind_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.BoundCommandRegister.bind_command" title="Link to this definition"></a></dt>
+<dd><p>Returns the bound version of the command</p>
+<p>Returns the underlying function of the command, with
+- the bound parameters already filled in
+- ensuring that the returnable errors are changed into strings</p>
+<p>In general, this is called by the :func:<code class="docutils literal notranslate"><span class="pre">__getitem__</span></code> method,
+you should not have to call it directly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.BoundCommandRegister.bind_parameters">
+<span class="sig-name descname"><span class="pre">bind_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bindable_parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#BoundCommandRegister.bind_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.BoundCommandRegister.bind_parameters" title="Link to this definition"></a></dt>
+<dd><p>Bind the parameters to the command, and return the bound parameters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.BoundCommandRegister.check_parameters">
+<span class="sig-name descname"><span class="pre">check_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mistral_tools.tool_register.Command" title="mistral_tools.tool_register.Command"><span class="pre">Command</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#BoundCommandRegister.check_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.BoundCommandRegister.check_parameters" title="Link to this definition"></a></dt>
+<dd><p>Check that the parameters are correct for the command</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.BoundCommandRegister.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#BoundCommandRegister.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.BoundCommandRegister.to_json" title="Link to this definition"></a></dt>
+<dd><p>Generate the json representation of the commands.</p>
+<p>This command simply calls the to_json method of the underlying command register.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mistral_tools.tool_register.BoundCommandRegister.handle_returnable_error">
+<span class="sig-name descname"><span class="pre">handle_returnable_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mistral_tools.tool_register.ReturnableError" title="mistral_tools.tool_register.ReturnableError"><span class="pre">ReturnableError</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mistral_tools/tool_register.html#BoundCommandRegister.handle_returnable_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mistral_tools.tool_register.BoundCommandRegister.handle_returnable_error" title="Link to this definition"></a></dt>
+<dd><p>Convert a returnable error to a string</p>
+<p>This can be overriden in a subclass to handle the errors differently</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mistral_tools.embeddings.html" class="btn btn-neutral float-left" title="mistral_tools.embeddings" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mistral_tools.utils.html" class="btn btn-neutral float-right" title="mistral_tools.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

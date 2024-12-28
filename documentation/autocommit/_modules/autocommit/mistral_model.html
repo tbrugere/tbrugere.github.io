@@ -1,0 +1,295 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>autocommit.mistral_model &mdash; autocommit 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            autocommit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Autocommit: automatically write commit messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../context.html">Adding context to commit messages</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/autocommit.html">autocommit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/basic_rag.html">basic_rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/mistral_tools.html">mistral_tools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">autocommit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../autocommit.html">autocommit</a></li>
+      <li class="breadcrumb-item active">autocommit.mistral_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for autocommit.mistral_model</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Final</span>
+<span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">dedent</span>
+<span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">resources</span>
+<span class="kn">from</span> <span class="nn">pygit2.repository</span> <span class="kn">import</span> <span class="n">Repository</span>
+
+<span class="kn">from</span> <span class="nn">autocommit.commands</span> <span class="kn">import</span> <span class="n">commands</span><span class="p">,</span> <span class="n">diff_all_files</span>
+<span class="kn">from</span> <span class="nn">autocommit.build_ragdb</span> <span class="kn">import</span> <span class="n">get_project_ragdb</span>
+<span class="kn">from</span> <span class="nn">mistral_tools.conversation</span> <span class="kn">import</span> <span class="n">ModelConversation</span>
+<span class="kn">from</span> <span class="nn">mistral_tools.utils</span> <span class="kn">import</span> <span class="n">RateLimiter</span>
+
+
+<div class="viewcode-block" id="get_prompt">
+<a class="viewcode-back" href="../../_autosummary/autocommit.mistral_model.html#autocommit.mistral_model.get_prompt">[docs]</a>
+<span class="k">def</span> <span class="nf">get_prompt</span><span class="p">(</span><span class="n">prompt_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a prompt from a resource file&quot;&quot;&quot;</span>
+    <span class="n">resource_files</span> <span class="o">=</span> <span class="n">resources</span><span class="o">.</span><span class="n">files</span><span class="p">(</span><span class="s2">&quot;autocommit.mistral_model&quot;</span><span class="p">)</span>
+    <span class="n">prompts</span> <span class="o">=</span> <span class="n">resource_files</span> <span class="o">/</span> <span class="s2">&quot;prompts&quot;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">(</span><span class="n">prompts</span> <span class="o">/</span> <span class="n">prompt_file</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lines</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">l</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)]</span> <span class="c1"># remove comments</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="says_ready">
+<a class="viewcode-back" href="../../_autosummary/autocommit.mistral_model.html#autocommit.mistral_model.says_ready">[docs]</a>
+<span class="k">def</span> <span class="nf">says_ready</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the model says it is ready (for use with tool calling)&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">content</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">last_line</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">last_line</span> <span class="o">=</span> <span class="n">last_line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">last_line</span> <span class="o">=</span> <span class="n">last_line</span><span class="o">.</span><span class="n">translate</span><span class="p">({</span><span class="n">c</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">})</span>
+    <span class="n">last_line</span> <span class="o">=</span> <span class="n">last_line</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">last_line</span> <span class="o">==</span> <span class="s2">&quot;ready&quot;</span></div>
+
+
+<div class="viewcode-block" id="get_initial_prompt">
+<a class="viewcode-back" href="../../_autosummary/autocommit.mistral_model.html#autocommit.mistral_model.get_initial_prompt">[docs]</a>
+<span class="k">def</span> <span class="nf">get_initial_prompt</span><span class="p">(</span><span class="n">include_diff</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rag</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> 
+                       <span class="n">repository</span><span class="p">:</span> <span class="n">Repository</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">n_context_chunks</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> 
+                       <span class="n">api_key</span><span class="p">,</span> <span class="n">rate_limit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the initial prompt for the model&quot;&quot;&quot;</span>
+    <span class="n">start_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">get_prompt</span><span class="p">(</span><span class="s2">&quot;start_prompt.txt&quot;</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+    <span class="n">diff_value</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">rag</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">diff_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># get the diff if we haven&#39;t already</span>
+            <span class="n">diff_value</span> <span class="o">=</span> <span class="n">diff_all_files</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">repository</span><span class="p">)</span>
+        <span class="n">rag_db</span> <span class="o">=</span> <span class="n">get_project_ragdb</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">repo_path</span><span class="p">),</span> <span class="n">rate_limit</span><span class="o">=</span><span class="n">rate_limit</span><span class="p">)</span>
+        <span class="n">rag_prompt</span> <span class="o">=</span> <span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            Here are the changes in the codebase:</span>
+<span class="s2">            &lt;diff&gt;</span>
+<span class="s2">            </span><span class="si">{</span><span class="n">diff_value</span><span class="si">}</span>
+<span class="s2">            &lt;/diff&gt;</span>
+<span class="s2">            What are the most relevant parts of the codebase </span>
+<span class="s2">            that I should consider to understand these changes?</span>
+<span class="s2">            In particular, important parts of the readme, </span>
+<span class="s2">            and definitions of functions or classes that are called in this code.</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="p">)</span>
+        <span class="n">chunks</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">rag_db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">rag_prompt</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="n">n_context_chunks</span><span class="p">,</span> 
+                                 <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Here is some relevant context:</span><span class="se">\n</span><span class="s2">&lt;context&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="o">.</span><span class="n">text_chunk</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span> <span class="k">continue</span> <span class="c1"># skip empty chunks</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">to_str</span><span class="p">())</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&lt;/context&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">start_prompt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">include_diff</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">diff_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">diff_value</span> <span class="o">=</span> <span class="n">diff_all_files</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">repository</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&lt;diff&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">diff_value</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;/diff&gt;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="fix_formatting">
+<a class="viewcode-back" href="../../_autosummary/autocommit.mistral_model.html#autocommit.mistral_model.fix_formatting">[docs]</a>
+<span class="k">def</span> <span class="nf">fix_formatting</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fix formatting issues in the result.</span>
+
+<span class="sd">    Despite my best effort in prompt engineering,</span>
+<span class="sd">    the model keeps messing up the format</span>
+<span class="sd">    of the commit message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># remove extra newlines</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># fix title formatting</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">content</span>
+    <span class="n">potential_prefixes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Title:&quot;</span><span class="p">,</span> <span class="s2">&quot;Commit message:&quot;</span><span class="p">,</span> <span class="s2">&quot;Body:&quot;</span><span class="p">,</span> <span class="s2">&quot;Body&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">num_line</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)):</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">num_line</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">potential_prefixes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):]</span>
+        <span class="n">lines</span><span class="p">[</span><span class="n">num_line</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span>
+    <span class="n">title</span><span class="p">,</span> <span class="o">*</span><span class="n">body</span><span class="o">=</span> <span class="n">lines</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="n">title</span> <span class="o">=</span> <span class="n">title</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;: &#39;</span><span class="p">)</span> <span class="c1"># the model sometimes adds quotes around the title</span>
+    <span class="c1"># remove newlines at beginnig of body, I&#39;ll re-add them later</span>
+    <span class="n">start_body</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">start_body</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">body</span><span class="p">)</span> <span class="ow">and</span> <span class="n">body</span><span class="p">[</span><span class="n">start_body</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">start_body</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">body</span><span class="p">[</span><span class="n">start_body</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">body</span><span class="p">:</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;# no body&quot;</span><span class="p">]</span>
+
+    <span class="n">body_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="n">body_str</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../_autosummary/autocommit.mistral_model.html#autocommit.mistral_model.main">[docs]</a>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">api_key</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">,</span> <span class="n">max_tool_uses</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">use_tools</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+         <span class="n">use_rag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">separate_title_body</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a commit message&quot;&quot;&quot;</span>
+    <span class="n">repo</span> <span class="o">=</span> <span class="n">Repository</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">repo_path</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">use_rag</span><span class="p">:</span>
+        <span class="n">commands_bound</span> <span class="o">=</span> <span class="n">commands</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">repository</span><span class="o">=</span><span class="n">repo</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">commands_bound</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">rate_limit</span> <span class="o">=</span> <span class="n">RateLimiter</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">system_prompt</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_prompt</span><span class="p">(</span><span class="s2">&quot;system_prompt.txt&quot;</span><span class="p">)</span>
+    <span class="n">prompt</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_prompt</span><span class="p">(</span><span class="s2">&quot;exchange_prompt.txt&quot;</span><span class="p">)</span>
+    <span class="n">title_prompt</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_prompt</span><span class="p">(</span><span class="s2">&quot;title_prompt.txt&quot;</span><span class="p">)</span>
+    <span class="n">final_prompt</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_prompt</span><span class="p">(</span><span class="s2">&quot;final_prompt.txt&quot;</span><span class="p">)</span>
+    <span class="n">not_separated_prompt</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_prompt</span><span class="p">(</span><span class="s2">&quot;not_separated_prompt.txt&quot;</span><span class="p">)</span>
+    <span class="c1"># final_prompt: Final[str] = get_prompt(&quot;final_prompt.txt&quot;)</span>
+
+    <span class="c1"># TODO possibliy prefix? to handle getting title and body</span>
+    <span class="c1"># also dummy too calls for information that will definitely be useful</span>
+
+    <span class="n">model</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;codestral-latest&quot;</span>
+
+    <span class="n">conversation</span> <span class="o">=</span> <span class="n">ModelConversation</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">tool_register</span><span class="o">=</span><span class="n">commands_bound</span><span class="p">,</span> 
+            <span class="n">system_prompt</span><span class="o">=</span><span class="n">system_prompt</span><span class="p">,</span> <span class="n">rate_limit</span><span class="o">=</span><span class="n">rate_limit</span><span class="p">)</span>
+
+    <span class="n">start_prompt</span> <span class="o">=</span> <span class="n">get_initial_prompt</span><span class="p">(</span><span class="n">include_diff</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rag</span><span class="o">=</span><span class="n">use_rag</span><span class="p">,</span> 
+        <span class="n">repository</span><span class="o">=</span><span class="n">repo</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="n">repo_path</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">rate_limit</span><span class="o">=</span><span class="n">rate_limit</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_tools</span><span class="p">:</span>
+        <span class="n">conversation</span><span class="o">.</span><span class="n">add_message</span><span class="p">(</span><span class="n">start_prompt</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">conversation</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">tool_choice</span><span class="o">=</span><span class="s2">&quot;any&quot;</span> <span class="k">if</span> <span class="n">use_tools</span> <span class="k">else</span> <span class="s2">&quot;none&quot;</span><span class="p">)</span>
+        <span class="n">n_remaining_tool_uses</span> <span class="o">=</span> <span class="n">max_tool_uses</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="k">while</span> <span class="n">n_remaining_tool_uses</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># conversation.add_message(prompt)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">conversation</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">tool_choice</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+            <span class="n">n_remaining_tool_uses</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">says_ready</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+                <span class="n">conversation</span><span class="o">.</span><span class="n">add_message</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+        <span class="n">conversation</span><span class="o">.</span><span class="n">add_message</span><span class="p">(</span><span class="n">title_prompt</span> <span class="k">if</span> <span class="n">separate_title_body</span> <span class="k">else</span> <span class="n">not_separated_prompt</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="n">conversation</span><span class="o">.</span><span class="n">add_message</span><span class="p">(</span><span class="n">start_prompt</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="n">title_prompt</span> <span class="k">if</span> <span class="n">separate_title_body</span> <span class="k">else</span> <span class="n">not_separated_prompt</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">separate_title_body</span><span class="p">:</span>
+        <span class="n">conversation</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="s2">&quot;Title: &quot;</span><span class="p">)</span>
+        <span class="n">response_title</span> <span class="o">=</span> <span class="n">conversation</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">tool_choice</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+        <span class="n">conversation</span><span class="o">.</span><span class="n">add_message</span><span class="p">(</span><span class="n">final_prompt</span><span class="p">)</span>
+        <span class="n">conversation</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="s2">&quot;Body: &quot;</span><span class="p">)</span>
+        <span class="n">response_body</span> <span class="o">=</span> <span class="n">conversation</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">tool_choice</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+
+        <span class="n">title</span> <span class="o">=</span> <span class="n">response_title</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">response_body</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="se">\n\n</span><span class="si">{</span><span class="n">body</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">conversation</span><span class="o">.</span><span class="n">add_prefix</span><span class="p">(</span><span class="s2">&quot;Commit message: &quot;</span><span class="p">)</span>
+        <span class="n">response_title</span> <span class="o">=</span> <span class="n">conversation</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">tool_choice</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">response_title</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
+
+    <span class="k">return</span> <span class="n">fix_formatting</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

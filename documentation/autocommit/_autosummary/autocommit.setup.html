@@ -1,0 +1,224 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>autocommit.setup &mdash; autocommit 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="autocommit.utils" href="autocommit.utils.html" />
+    <link rel="prev" title="autocommit.mistral_model" href="autocommit.mistral_model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            autocommit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Autocommit: automatically write commit messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../context.html">Adding context to commit messages</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="autocommit.html">autocommit</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.run_argument_parser"><code class="docutils literal notranslate"><span class="pre">run_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.setup_argument_parser"><code class="docutils literal notranslate"><span class="pre">setup_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.cleanup_argument_parser"><code class="docutils literal notranslate"><span class="pre">cleanup_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.build_ragdb_argument_parser"><code class="docutils literal notranslate"><span class="pre">build_ragdb_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.git_prepare_commit_msg_argument_parser"><code class="docutils literal notranslate"><span class="pre">git_prepare_commit_msg_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.git_post_commit_argument_parser"><code class="docutils literal notranslate"><span class="pre">git_post_commit_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.argument_parser"><code class="docutils literal notranslate"><span class="pre">argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.configure_logging"><code class="docutils literal notranslate"><span class="pre">configure_logging()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.generate_commit_message"><code class="docutils literal notranslate"><span class="pre">generate_commit_message()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.build_ragdb.html">autocommit.build_ragdb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.commands.html">autocommit.commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.config.html">autocommit.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.git_hooks.html">autocommit.git_hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.mistral_model.html">autocommit.mistral_model</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">autocommit.setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.setup.add_storage_dir_to_exclude"><code class="docutils literal notranslate"><span class="pre">add_storage_dir_to_exclude()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.setup.add_key_to_tree"><code class="docutils literal notranslate"><span class="pre">add_key_to_tree()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.setup.check_repo_bare"><code class="docutils literal notranslate"><span class="pre">check_repo_bare()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.setup.add_commit_hook"><code class="docutils literal notranslate"><span class="pre">add_commit_hook()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.setup.remove_commit_hook"><code class="docutils literal notranslate"><span class="pre">remove_commit_hook()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.setup.get_repo_worktree"><code class="docutils literal notranslate"><span class="pre">get_repo_worktree()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.setup.run_setup"><code class="docutils literal notranslate"><span class="pre">run_setup()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.setup.run_cleanup"><code class="docutils literal notranslate"><span class="pre">run_cleanup()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.utils.html">autocommit.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basic_rag.html">basic_rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mistral_tools.html">mistral_tools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">autocommit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="autocommit.html">autocommit</a></li>
+      <li class="breadcrumb-item active">autocommit.setup</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/autocommit.setup.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-autocommit.setup">
+<span id="autocommit-setup"></span><h1>autocommit.setup<a class="headerlink" href="#module-autocommit.setup" title="Link to this heading"></a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.setup.add_commit_hook" title="autocommit.setup.add_commit_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_commit_hook</span></code></a>(repo, *[, hook_name])</p></td>
+<td><p>Adds the commit hook to the repository</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.setup.add_key_to_tree" title="autocommit.setup.add_key_to_tree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_key_to_tree</span></code></a>(key, worktree)</p></td>
+<td><p>Adds the api key to the worktree</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.setup.add_storage_dir_to_exclude" title="autocommit.setup.add_storage_dir_to_exclude"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_storage_dir_to_exclude</span></code></a>(gitdir)</p></td>
+<td><p>Add .autocommit_storage_dir/ to the .git/info/exclude file</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.setup.check_repo_bare" title="autocommit.setup.check_repo_bare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_repo_bare</span></code></a>(repo)</p></td>
+<td><p>Checks if the repo is bare</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.setup.get_repo_worktree" title="autocommit.setup.get_repo_worktree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_repo_worktree</span></code></a>(repo[, worktree])</p></td>
+<td><p>Gets the repo and worktree paths</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.setup.remove_commit_hook" title="autocommit.setup.remove_commit_hook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_commit_hook</span></code></a>(repo, *[, hook_name])</p></td>
+<td><p>Removes the commit hook from the repository</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.setup.run_cleanup" title="autocommit.setup.run_cleanup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_cleanup</span></code></a>(repo[, worktree])</p></td>
+<td><p>Cleans up the autocommit setup</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.setup.run_setup" title="autocommit.setup.run_setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_setup</span></code></a>(repo, isolation[, key, worktree, ...])</p></td>
+<td><p>Runs the setup for the repository</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.setup.add_storage_dir_to_exclude">
+<span class="sig-prename descclassname"><span class="pre">autocommit.setup.</span></span><span class="sig-name descname"><span class="pre">add_storage_dir_to_exclude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gitdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/setup.html#add_storage_dir_to_exclude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.setup.add_storage_dir_to_exclude" title="Link to this definition"></a></dt>
+<dd><p>Add .autocommit_storage_dir/ to the .git/info/exclude file</p>
+<p>unless it is already there. This serves to avoid tracking the storage directory,
+which contains the api key.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.setup.add_key_to_tree">
+<span class="sig-prename descclassname"><span class="pre">autocommit.setup.</span></span><span class="sig-name descname"><span class="pre">add_key_to_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worktree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/setup.html#add_key_to_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.setup.add_key_to_tree" title="Link to this definition"></a></dt>
+<dd><p>Adds the api key to the worktree</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.setup.check_repo_bare">
+<span class="sig-prename descclassname"><span class="pre">autocommit.setup.</span></span><span class="sig-name descname"><span class="pre">check_repo_bare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/setup.html#check_repo_bare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.setup.check_repo_bare" title="Link to this definition"></a></dt>
+<dd><p>Checks if the repo is bare</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.setup.add_commit_hook">
+<span class="sig-prename descclassname"><span class="pre">autocommit.setup.</span></span><span class="sig-name descname"><span class="pre">add_commit_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'prepare-commit-msg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook_content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/setup.html#add_commit_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.setup.add_commit_hook" title="Link to this definition"></a></dt>
+<dd><p>Adds the commit hook to the repository</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.setup.remove_commit_hook">
+<span class="sig-prename descclassname"><span class="pre">autocommit.setup.</span></span><span class="sig-name descname"><span class="pre">remove_commit_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'prepare-commit-msg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hook_content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/setup.html#remove_commit_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.setup.remove_commit_hook" title="Link to this definition"></a></dt>
+<dd><p>Removes the commit hook from the repository</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.setup.get_repo_worktree">
+<span class="sig-prename descclassname"><span class="pre">autocommit.setup.</span></span><span class="sig-name descname"><span class="pre">get_repo_worktree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worktree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/setup.html#get_repo_worktree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.setup.get_repo_worktree" title="Link to this definition"></a></dt>
+<dd><p>Gets the repo and worktree paths</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.setup.run_setup">
+<span class="sig-prename descclassname"><span class="pre">autocommit.setup.</span></span><span class="sig-name descname"><span class="pre">run_setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isolation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worktree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_rag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_function_calls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/setup.html#run_setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.setup.run_setup" title="Link to this definition"></a></dt>
+<dd><p>Runs the setup for the repository</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.setup.run_cleanup">
+<span class="sig-prename descclassname"><span class="pre">autocommit.setup.</span></span><span class="sig-name descname"><span class="pre">run_cleanup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worktree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/setup.html#run_cleanup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.setup.run_cleanup" title="Link to this definition"></a></dt>
+<dd><p>Cleans up the autocommit setup</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="autocommit.mistral_model.html" class="btn btn-neutral float-left" title="autocommit.mistral_model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="autocommit.utils.html" class="btn btn-neutral float-right" title="autocommit.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

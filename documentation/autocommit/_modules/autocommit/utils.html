@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>autocommit.utils &mdash; autocommit 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            autocommit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Autocommit: automatically write commit messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../context.html">Adding context to commit messages</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/autocommit.html">autocommit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/basic_rag.html">basic_rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/mistral_tools.html">mistral_tools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">autocommit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../autocommit.html">autocommit</a></li>
+      <li class="breadcrumb-item active">autocommit.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for autocommit.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Miscellaneous utilities for autocommit&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
+<span class="kn">import</span> <span class="nn">functools</span> <span class="k">as</span> <span class="nn">ft</span>
+<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">getLogger</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">ParamSpec</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">from</span> <span class="nn">pygit2</span> <span class="kn">import</span> <span class="n">Blob</span>
+<span class="kn">from</span> <span class="nn">pygit2.enums</span> <span class="kn">import</span> <span class="n">ObjectType</span>
+
+<span class="kn">from</span> <span class="nn">mistral_tools.tool_register</span> <span class="kn">import</span> <span class="n">ReturnableError</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="get_api_key">
+<a class="viewcode-back" href="../../_autosummary/autocommit.utils.html#autocommit.utils.get_api_key">[docs]</a>
+<span class="k">def</span> <span class="nf">get_api_key</span><span class="p">(</span><span class="n">key_file</span><span class="p">:</span> <span class="n">Path</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">storage_dir</span><span class="p">:</span> <span class="n">Path</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the Mistral API key&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">key_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">key_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">&quot;MISTRAL_API_KEY&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MISTRAL_API_KEY&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">storage_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">api_key_file</span> <span class="o">=</span> <span class="n">storage_dir</span> <span class="o">/</span> <span class="s2">&quot;api_key&quot;</span>
+        <span class="k">if</span> <span class="n">api_key_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">api_key_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No api key found. &quot;</span>
+                    <span class="s2">&quot;Please specify a key file or set the $MISTRAL_API_KEY &quot;</span>
+                    <span class="s2">&quot;environment variable&quot;</span><span class="p">)</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Error management (not raised, but returned, for interaction with the llm)</span>
+<span class="sd">-------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="FileNotFoundReturnableError">
+<a class="viewcode-back" href="../../_autosummary/autocommit.utils.html#autocommit.utils.FileNotFoundReturnableError">[docs]</a>
+<span class="k">class</span> <span class="nc">FileNotFoundReturnableError</span><span class="p">(</span><span class="n">ReturnableError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returned by the tool calls if a file is not found in the repository&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;FileNotFound&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> not found in the repository&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FileIsBinaryReturnableError">
+<a class="viewcode-back" href="../../_autosummary/autocommit.utils.html#autocommit.utils.FileIsBinaryReturnableError">[docs]</a>
+<span class="k">class</span> <span class="nc">FileIsBinaryReturnableError</span><span class="p">(</span><span class="n">ReturnableError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returned by the tool calls if a file cannot be printed&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;FileIsBinary&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> is binary, cannot print&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FileUnchangedError">
+<a class="viewcode-back" href="../../_autosummary/autocommit.utils.html#autocommit.utils.FileUnchangedError">[docs]</a>
+<span class="k">class</span> <span class="nc">FileUnchangedError</span><span class="p">(</span><span class="n">ReturnableError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returned by the tool calls if a file has no diff because it did not change&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;FileUnchanged&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> was not changed in this commit&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FileNewError">
+<a class="viewcode-back" href="../../_autosummary/autocommit.utils.html#autocommit.utils.FileNewError">[docs]</a>
+<span class="k">class</span> <span class="nc">FileNewError</span><span class="p">(</span><span class="n">ReturnableError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returned by the tool calls if a file has no diff because it is new&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;NewFile&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> is new, cannot print diff&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Git utils</span>
+<span class="sd">---------</span>
+
+<span class="sd">Miscellaneous utilities for working with git objects</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="walk_tree">
+<a class="viewcode-back" href="../../_autosummary/autocommit.utils.html#autocommit.utils.walk_tree">[docs]</a>
+<span class="k">def</span> <span class="nf">walk_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">base_path</span><span class="o">=</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">Blob</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Walk a tree recursively</span>
+
+<span class="sd">    Yield all blobs in the tree, and their path relative to the root tree</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tree (Tree): The tree to walk</span>
+<span class="sd">        base_path (tuple, optional): The path to the current tree. Defaults to ().</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">tree</span><span class="p">:</span>
+        <span class="k">match</span> <span class="n">item</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
+            <span class="k">case</span> <span class="n">ObjectType</span><span class="o">.</span><span class="n">BLOB</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="p">(</span><span class="o">*</span><span class="n">base_path</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">item</span>
+            <span class="k">case</span> <span class="n">ObjectType</span><span class="o">.</span><span class="n">TREE</span><span class="p">:</span>
+                <span class="k">yield from</span> <span class="n">walk_tree</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">base_path</span><span class="o">=</span><span class="p">(</span><span class="o">*</span><span class="n">base_path</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="p">,))</span>
+            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected object type </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">type_str</span><span class="si">}</span><span class="s2"> in tree&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Miscellaneous utilities</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">P</span> <span class="o">=</span> <span class="n">ParamSpec</span><span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="take_argument_annotation_from">
+<a class="viewcode-back" href="../../_autosummary/autocommit.utils.html#autocommit.utils.take_argument_annotation_from">[docs]</a>
+<span class="k">def</span> <span class="nf">take_argument_annotation_from</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> \
+        <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">T</span><span class="p">]],</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Take the argument annotations from another function</span>
+
+<span class="sd">    Decorator stating that the function it decorates </span>
+<span class="sd">    should have the same annotations as the function passed as argument.</span>
+
+<span class="sd">    Inspired from https://stackoverflow.com/a/71262408/4948719</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">real_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">]:</span>
+        <span class="n">return_type</span> <span class="o">=</span><span class="p">{</span><span class="s2">&quot;return&quot;</span><span class="p">:</span> <span class="n">real_function</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">[</span><span class="s2">&quot;return&quot;</span><span class="p">]}</span> <span class="k">if</span> <span class="s2">&quot;return&quot;</span> <span class="ow">in</span> <span class="n">real_function</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">real_function</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">this</span><span class="o">.</span><span class="vm">__annotations__</span><span class="p">,</span> <span class="o">**</span><span class="n">return_type</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">real_function</span> <span class="c1">#type: ignore </span>
+    <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+<div class="viewcode-block" id="CreateArgumentParserReturnSignature">
+<a class="viewcode-back" href="../../_autosummary/autocommit.utils.html#autocommit.utils.CreateArgumentParserReturnSignature">[docs]</a>
+<span class="k">class</span> <span class="nc">CreateArgumentParserReturnSignature</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span> <span class="c1">#noqa: D101</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span> <span class="o">...</span> <span class="c1">#noqa: D102</span></div>
+
+
+<div class="viewcode-block" id="create_argument_parser">
+<a class="viewcode-back" href="../../_autosummary/autocommit.utils.html#autocommit.utils.create_argument_parser">[docs]</a>
+<span class="nd">@take_argument_annotation_from</span><span class="p">(</span><span class="n">ArgumentParser</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">create_argument_parser</span><span class="p">(</span><span class="o">**</span><span class="n">argparse_kwargs</span><span class="p">)</span> \
+        <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">ArgumentParser</span><span class="p">],</span> <span class="kc">None</span><span class="p">]],</span> 
+                    <span class="n">CreateArgumentParserReturnSignature</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator that potentially creates an argument parser and passes it down</span>
+
+<span class="sd">    This is a helper function that allows to have a function that either</span>
+
+<span class="sd">    - populates an already existing parser </span>
+<span class="sd">        (if passed as argument, generally for use with subparsers)</span>
+<span class="sd">    - creates an all new parser</span>
+
+<span class="sd">    It decorates a function that takes a single argument, an ArgumentParser, </span>
+<span class="sd">    and populates it.</span>
+
+<span class="sd">    usage:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        # @create_argument_parser</span>
+<span class="sd">        # accepts all the arguments of ArgumentParser. </span>
+<span class="sd">        # They will be passed to the ArgumentParser constructor </span>
+<span class="sd">        # if a new parser is created</span>
+<span class="sd">        @create_argument_parser(description=&quot;This is the description&quot;) </span>
+<span class="sd">        def my_argument_parser(parser: ArgumentParser):</span>
+<span class="sd">            parser.add_argument(&quot;--my-arg&quot;, help=&quot;This is the help&quot;)</span>
+
+<span class="sd">        specific_parser = my_argument_parser()</span>
+<span class="sd">        # or</span>
+<span class="sd">        parser = ArgumentParser()</span>
+<span class="sd">        subparsers = parser.add_subparsers()</span>
+<span class="sd">        my_argument_parser(subparsers.add_parser(&quot;my_subcommand&quot;))</span>
+
+<span class="sd">    .. note:: </span>
+
+<span class="sd">        The input function should only take a single argument parser, </span>
+<span class="sd">        and does not need to return anything. </span>
+<span class="sd">        The output function will return the parser.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ArgumentParser</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> \
+            <span class="o">-&gt;</span> <span class="n">CreateArgumentParserReturnSignature</span><span class="p">:</span>
+        <span class="nd">@ft</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parser</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="o">**</span><span class="n">argparse_kwargs</span><span class="p">)</span>
+            <span class="n">func</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">parser</span>
+        <span class="k">return</span> <span class="n">wrapper</span>
+    <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Algorithms</span>
+<span class="sd">----------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="compute_truncation">
+<a class="viewcode-back" href="../../_autosummary/autocommit.utils.html#autocommit.utils.compute_truncation">[docs]</a>
+<span class="k">def</span> <span class="nf">compute_truncation</span><span class="p">(</span><span class="n">lengths</span><span class="p">,</span> <span class="n">max_total_length</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Figure out the truncation of the lengths to fit in max_total_length</span>
+
+<span class="sd">    Given a list of lengths ``[l_1...l_n]``, and a maximum total length ``L``,</span>
+<span class="sd">    figure out the maximum truncation index ``t``, such that the sum of the lengths</span>
+<span class="sd">    truncated at ``t`` is less than ``L``, ie</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \sum_{i=1}^n min(l_i, t) &lt; L</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        lengths (list[int]): The list of lengths</span>
+<span class="sd">        max_total_length (int): The maximum total length</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="c1"># we add a dummy length of 0 </span>
+    <span class="c1"># which will make sure that there is one length smaller than the cutoff</span>
+    <span class="n">lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="o">*</span><span class="n">lengths</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="n">n</span><span class="p">,</span> <span class="o">=</span> <span class="n">lengths</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">total_len</span> <span class="o">=</span> <span class="n">lengths</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">total_len</span> <span class="o">&lt;=</span> <span class="n">max_total_length</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">lengths</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+    <span class="c1"># the total length function is piecewise affine, with cuts at the lengths</span>
+    <span class="c1"># we first compte the total length at each value of li</span>
+    <span class="c1"># which is l0 + ... + li + li * (n - i + 1)</span>
+    <span class="n">total_lengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span> 
+                           <span class="o">+</span> <span class="n">lengths</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">first_working_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">total_lengths</span><span class="p">,</span> 
+                                               <span class="n">max_total_length</span><span class="p">,</span> 
+                                               <span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+
+    <span class="c1"># must be &gt;0 because of the dummy length</span>
+    <span class="c1"># must be &lt;n because otherwise no need to cut</span>
+    <span class="k">assert</span>  <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">first_working_index</span> <span class="o">&lt;</span> <span class="n">n</span>
+
+    <span class="c1"># we need to find the exact value of the cutoff</span>
+    <span class="n">total_length_li</span> <span class="o">=</span> <span class="n">total_lengths</span><span class="p">[</span><span class="n">first_working_index</span><span class="p">]</span>
+    <span class="n">total_length_li_1</span> <span class="o">=</span> <span class="n">total_lengths</span><span class="p">[</span><span class="n">first_working_index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">li</span> <span class="o">=</span> <span class="n">lengths</span><span class="p">[</span><span class="n">first_working_index</span><span class="p">]</span>
+    <span class="n">li_1</span> <span class="o">=</span> <span class="n">lengths</span><span class="p">[</span><span class="n">first_working_index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">inverse_slope</span> <span class="o">=</span> <span class="p">(</span><span class="n">li</span> <span class="o">-</span> <span class="n">li_1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">total_length_li</span> <span class="o">-</span> <span class="n">total_length_li_1</span><span class="p">)</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">li_1</span> <span class="o">+</span> <span class="p">(</span><span class="n">max_total_length</span> <span class="o">-</span> <span class="n">total_length_li_1</span><span class="p">)</span> <span class="o">*</span> <span class="n">inverse_slope</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">t</span></div>
+
+
+    
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

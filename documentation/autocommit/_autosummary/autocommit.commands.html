@@ -1,0 +1,240 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>autocommit.commands &mdash; autocommit 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="autocommit.config" href="autocommit.config.html" />
+    <link rel="prev" title="autocommit.build_ragdb" href="autocommit.build_ragdb.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            autocommit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Autocommit: automatically write commit messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../context.html">Adding context to commit messages</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="autocommit.html">autocommit</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.run_argument_parser"><code class="docutils literal notranslate"><span class="pre">run_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.setup_argument_parser"><code class="docutils literal notranslate"><span class="pre">setup_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.cleanup_argument_parser"><code class="docutils literal notranslate"><span class="pre">cleanup_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.build_ragdb_argument_parser"><code class="docutils literal notranslate"><span class="pre">build_ragdb_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.git_prepare_commit_msg_argument_parser"><code class="docutils literal notranslate"><span class="pre">git_prepare_commit_msg_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.git_post_commit_argument_parser"><code class="docutils literal notranslate"><span class="pre">git_post_commit_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.argument_parser"><code class="docutils literal notranslate"><span class="pre">argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.configure_logging"><code class="docutils literal notranslate"><span class="pre">configure_logging()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.generate_commit_message"><code class="docutils literal notranslate"><span class="pre">generate_commit_message()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.build_ragdb.html">autocommit.build_ragdb</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">autocommit.commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.commands.print_file"><code class="docutils literal notranslate"><span class="pre">print_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.commands.ls_files"><code class="docutils literal notranslate"><span class="pre">ls_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.commands.diff_file"><code class="docutils literal notranslate"><span class="pre">diff_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.commands.diff_all_files"><code class="docutils literal notranslate"><span class="pre">diff_all_files()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.config.html">autocommit.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.git_hooks.html">autocommit.git_hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.mistral_model.html">autocommit.mistral_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.setup.html">autocommit.setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.utils.html">autocommit.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basic_rag.html">basic_rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mistral_tools.html">mistral_tools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">autocommit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="autocommit.html">autocommit</a></li>
+      <li class="breadcrumb-item active">autocommit.commands</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/autocommit.commands.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-autocommit.commands">
+<span id="autocommit-commands"></span><h1>autocommit.commands<a class="headerlink" href="#module-autocommit.commands" title="Link to this heading"></a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.commands.diff_all_files" title="autocommit.commands.diff_all_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diff_all_files</span></code></a>([context, max_content_size, ...])</p></td>
+<td><p>Print the diff between the staged version and the head for all modified files</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.commands.diff_file" title="autocommit.commands.diff_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diff_file</span></code></a>(file[, context])</p></td>
+<td><p>Print the diff between the staged version of the file and the head</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.commands.ls_files" title="autocommit.commands.ls_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ls_files</span></code></a>([indicate_changes, only_changed])</p></td>
+<td><p>List all files in the repository</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.commands.print_file" title="autocommit.commands.print_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print_file</span></code></a>(file[, start_line, num_lines, staged])</p></td>
+<td><p>Print the contents of the file.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.commands.print_file">
+<span class="sig-prename descclassname"><span class="pre">autocommit.commands.</span></span><span class="sig-name descname"><span class="pre">print_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_line</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">staged</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Repository</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/commands.html#print_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.commands.print_file" title="Link to this definition"></a></dt>
+<dd><p>Print the contents of the file.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>this command does not actually read anything from the working directory,
+only from git objects and the staging area.
+This is mainly for security reasons (we do not want to give the LLM access
+to the filesystem).</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>or if the</em>) – The file to print</p></li>
+<li><p><strong>start_line</strong> (<em>int</em><em>, </em><em>optional</em>) – The starting line. Defaults to 0.</p></li>
+<li><p><strong>num_lines</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of lines to print. Defaults to 20.</p></li>
+<li><p><strong>staged</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to print the staged version of the file</p></li>
+<li><p><strong>False</strong> (<em>if available. Defaults to True. If</em>)</p></li>
+<li><p><strong>file</strong></p></li>
+<li><p><strong>area</strong> (<em>is not in the staging</em>)</p></li>
+<li><p><strong>used.</strong> (<em>the latest tracked version is</em>)</p></li>
+<li><p><strong>repository</strong> (<em>Repository</em>) – The current git repository</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.commands.ls_files">
+<span class="sig-prename descclassname"><span class="pre">autocommit.commands.</span></span><span class="sig-name descname"><span class="pre">ls_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indicate_changes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_changed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Repository</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/commands.html#ls_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.commands.ls_files" title="Link to this definition"></a></dt>
+<dd><p>List all files in the repository</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indicate_changes</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to indicate changes in the files.</p></li>
+<li><p><strong>only_changed</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to only list files that have changes.</p></li>
+<li><p><strong>repository</strong> (<em>Repository</em>) – The current git repository</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of all files in the repository</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.commands.diff_file">
+<span class="sig-prename descclassname"><span class="pre">autocommit.commands.</span></span><span class="sig-name descname"><span class="pre">diff_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Repository</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/commands.html#diff_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.commands.diff_file" title="Link to this definition"></a></dt>
+<dd><p>Print the diff between the staged version of the file and the head</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<em>str</em>) – The file to print the diff of</p></li>
+<li><p><strong>context</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of lines of context to print. Defaults to 5.</p></li>
+<li><p><strong>repository</strong> (<em>Repository</em>) – The current git repository</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.commands.diff_all_files">
+<span class="sig-prename descclassname"><span class="pre">autocommit.commands.</span></span><span class="sig-name descname"><span class="pre">diff_all_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Repository</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_content_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_total_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">90000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/commands.html#diff_all_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.commands.diff_all_files" title="Link to this definition"></a></dt>
+<dd><p>Print the diff between the staged version and the head for all modified files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>context</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of lines of context to print. Defaults to 5.</p></li>
+<li><p><strong>repository</strong> (<em>Repository</em>) – The current git repository</p></li>
+<li><p><strong>max_content_size</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum size of the content to print
+for one file</p></li>
+<li><p><strong>max_total_size</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum total size of the content to print
+if True, we automatically cut off the largest files to fit in this size</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="autocommit.build_ragdb.html" class="btn btn-neutral float-left" title="autocommit.build_ragdb" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="autocommit.config.html" class="btn btn-neutral float-right" title="autocommit.config" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

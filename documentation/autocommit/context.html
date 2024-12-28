@@ -1,0 +1,159 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adding context to commit messages &mdash; autocommit 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=2709fde1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="autocommit" href="_autosummary/autocommit.html" />
+    <link rel="prev" title="Autocommit: automatically write commit messages" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            autocommit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Autocommit: automatically write commit messages</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Adding context to commit messages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-rag-database">The RAG database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Function calling</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/autocommit.html">autocommit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/basic_rag.html">basic_rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/mistral_tools.html">mistral_tools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">autocommit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Adding context to commit messages</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/context.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="adding-context-to-commit-messages">
+<h1>Adding context to commit messages<a class="headerlink" href="#adding-context-to-commit-messages" title="Link to this heading"></a></h1>
+<p>Generating the commit message with just the content of the diff generally
+yields poor results.
+The model needs more context to generate a meaningful commit message.</p>
+<p>Autocommit provides two ways to give context to the model:</p>
+<ul class="simple">
+<li><p>By using a Retriaval-Augmented Generation (RAG) approach described in <a class="reference internal" href="#the-rag-database">The RAG database</a> section.</p></li>
+<li><p>By using Mistral’s <a class="reference external" href="https://docs.mistral.ai/capabilities/function_calling/">function calling</a> capability to let the model pull in additional context from the codebase. This is described in the <a class="reference external" href="https://docs.mistral.ai/capabilities/function_calling/">Function calling</a> section.</p></li>
+</ul>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">autocommit</span></code> uses the RAG approach to generate commit messages. The function calling approach has several limitations outlined in the <a class="reference external" href="https://docs.mistral.ai/capabilities/function_calling/">Function calling</a> section, so it is not recommended for general use.</p>
+<section id="the-rag-database">
+<h2>The RAG database<a class="headerlink" href="#the-rag-database" title="Link to this heading"></a></h2>
+<p>The RAG approach consists of keeping a database of code snippets from the codebase,
+with <a class="reference external" href="https://en.wikipedia.org/wiki/Sentence_embedding">sentence embeddings</a>,
+and to use a vector similarity search to find code snippets relevant to
+the code in the commit.  Those code snippets are then used to generate the system prompt.</p>
+<p>A more detailed introduction to RAG can be found in the <a class="reference external" href="https://en.wikipedia.org/wiki/Retrieval-augmented_generation">Wikipedia article</a> and a good overview of the state of the art can be found in this <a class="reference external" href="https://arxiv.org/abs/2312.10997">review paper</a>.</p>
+<p>This is <strong>enabled by default</strong>. The database is first built from the codebase when
+running <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">setup</span></code>. It is stored in the <code class="docutils literal notranslate"><span class="pre">.autocommit_storage_dir</span></code> directory (which is always untracked).
+It is then updated in the background everytime a commit is made (through a post-commit git hook).</p>
+<p>The RAG database is implemented in the <a class="reference internal" href="_autosummary/basic_rag.html#module-basic_rag" title="basic_rag"><code class="xref py py-mod docutils literal notranslate"><span class="pre">basic_rag</span></code></a> module.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Using the RAG approach has a performance cost:</p>
+<ul class="simple">
+<li><p>every update to the database will make calls to the Mistral API to generate embeddings for the new code snippets (which is invisible to the user unless they are trying to do another commit immediately since it runs in the background).</p></li>
+<li><p>to generate the commit message, the model now has to first generate an embedding to query the database, and then send the generated prompt to the model. This will take at least 1 second because of the 1 request / second rate limit on the Mistral API.</p></li>
+</ul>
+</div>
+</section>
+<section id="id1">
+<h2>Function calling<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>The function calling approach consists of letting the model call functions from the codebase to get additional context. This uses Mistral’s <a class="reference external" href="https://docs.mistral.ai/capabilities/function_calling/">function calling</a> capability.</p>
+<p>This approach is <strong>not enabled by default</strong> because it has several limitations:</p>
+<ul class="simple">
+<li><p>It requires that the program and the api exchange messages several times, which can be slow because of the rate limiting.</p></li>
+<li><p>It generally yields worse results than the RAG approach: the model is less efficient at querying the right files than the embedding approach is.</p></li>
+<li><p>It raises security concerns by giving some kind of disk access to the model (although this is mitigated by the fact that the functions only have access to git objects, not the filesystem).</p></li>
+</ul>
+<p>The functions made available to the model are defined in the <a class="reference internal" href="_autosummary/autocommit.commands.html#module-autocommit.commands" title="autocommit.commands"><code class="xref py py-mod docutils literal notranslate"><span class="pre">autocommit.commands</span></code></a> module.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Autocommit: automatically write commit messages" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_autosummary/autocommit.html" class="btn btn-neutral float-right" title="autocommit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

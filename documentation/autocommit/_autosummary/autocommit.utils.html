@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>autocommit.utils &mdash; autocommit 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="basic_rag" href="basic_rag.html" />
+    <link rel="prev" title="autocommit.setup" href="autocommit.setup.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            autocommit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Autocommit: automatically write commit messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../context.html">Adding context to commit messages</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="autocommit.html">autocommit</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.run_argument_parser"><code class="docutils literal notranslate"><span class="pre">run_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.setup_argument_parser"><code class="docutils literal notranslate"><span class="pre">setup_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.cleanup_argument_parser"><code class="docutils literal notranslate"><span class="pre">cleanup_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.build_ragdb_argument_parser"><code class="docutils literal notranslate"><span class="pre">build_ragdb_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.git_prepare_commit_msg_argument_parser"><code class="docutils literal notranslate"><span class="pre">git_prepare_commit_msg_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.git_post_commit_argument_parser"><code class="docutils literal notranslate"><span class="pre">git_post_commit_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.argument_parser"><code class="docutils literal notranslate"><span class="pre">argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.configure_logging"><code class="docutils literal notranslate"><span class="pre">configure_logging()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.html#autocommit.generate_commit_message"><code class="docutils literal notranslate"><span class="pre">generate_commit_message()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.build_ragdb.html">autocommit.build_ragdb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.commands.html">autocommit.commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.config.html">autocommit.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.git_hooks.html">autocommit.git_hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.mistral_model.html">autocommit.mistral_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.setup.html">autocommit.setup</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">autocommit.utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.utils.get_api_key"><code class="docutils literal notranslate"><span class="pre">get_api_key()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.utils.FileNotFoundReturnableError"><code class="docutils literal notranslate"><span class="pre">FileNotFoundReturnableError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.utils.FileIsBinaryReturnableError"><code class="docutils literal notranslate"><span class="pre">FileIsBinaryReturnableError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.utils.FileUnchangedError"><code class="docutils literal notranslate"><span class="pre">FileUnchangedError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.utils.FileNewError"><code class="docutils literal notranslate"><span class="pre">FileNewError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.utils.walk_tree"><code class="docutils literal notranslate"><span class="pre">walk_tree()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.utils.take_argument_annotation_from"><code class="docutils literal notranslate"><span class="pre">take_argument_annotation_from()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.utils.CreateArgumentParserReturnSignature"><code class="docutils literal notranslate"><span class="pre">CreateArgumentParserReturnSignature</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.utils.create_argument_parser"><code class="docutils literal notranslate"><span class="pre">create_argument_parser()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autocommit.utils.compute_truncation"><code class="docutils literal notranslate"><span class="pre">compute_truncation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basic_rag.html">basic_rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mistral_tools.html">mistral_tools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">autocommit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="autocommit.html">autocommit</a></li>
+      <li class="breadcrumb-item active">autocommit.utils</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/autocommit.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-autocommit.utils">
+<span id="autocommit-utils"></span><h1>autocommit.utils<a class="headerlink" href="#module-autocommit.utils" title="Link to this heading"></a></h1>
+<p>Miscellaneous utilities for autocommit</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.utils.compute_truncation" title="autocommit.utils.compute_truncation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_truncation</span></code></a>(lengths, max_total_length)</p></td>
+<td><p>Figure out the truncation of the lengths to fit in max_total_length</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.utils.create_argument_parser" title="autocommit.utils.create_argument_parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_argument_parser</span></code></a>(**argparse_kwargs)</p></td>
+<td><p>Decorator that potentially creates an argument parser and passes it down</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.utils.get_api_key" title="autocommit.utils.get_api_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_api_key</span></code></a>([key_file, storage_dir])</p></td>
+<td><p>Get the Mistral API key</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.utils.take_argument_annotation_from" title="autocommit.utils.take_argument_annotation_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">take_argument_annotation_from</span></code></a>(this)</p></td>
+<td><p>Take the argument annotations from another function</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.utils.walk_tree" title="autocommit.utils.walk_tree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">walk_tree</span></code></a>(tree, *[, base_path])</p></td>
+<td><p>Walk a tree recursively</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.utils.CreateArgumentParserReturnSignature" title="autocommit.utils.CreateArgumentParserReturnSignature"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CreateArgumentParserReturnSignature</span></code></a>(*args, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.utils.FileIsBinaryReturnableError" title="autocommit.utils.FileIsBinaryReturnableError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileIsBinaryReturnableError</span></code></a>(file)</p></td>
+<td><p>Returned by the tool calls if a file cannot be printed</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.utils.FileNewError" title="autocommit.utils.FileNewError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileNewError</span></code></a>(file)</p></td>
+<td><p>Returned by the tool calls if a file has no diff because it is new</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.utils.FileNotFoundReturnableError" title="autocommit.utils.FileNotFoundReturnableError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileNotFoundReturnableError</span></code></a>(file)</p></td>
+<td><p>Returned by the tool calls if a file is not found in the repository</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.utils.FileUnchangedError" title="autocommit.utils.FileUnchangedError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileUnchangedError</span></code></a>(file)</p></td>
+<td><p>Returned by the tool calls if a file has no diff because it did not change</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.utils.get_api_key">
+<span class="sig-prename descclassname"><span class="pre">autocommit.utils.</span></span><span class="sig-name descname"><span class="pre">get_api_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/autocommit/utils.html#get_api_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.utils.get_api_key" title="Link to this definition"></a></dt>
+<dd><p>Get the Mistral API key</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autocommit.utils.FileNotFoundReturnableError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autocommit.utils.</span></span><span class="sig-name descname"><span class="pre">FileNotFoundReturnableError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/utils.html#FileNotFoundReturnableError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.utils.FileNotFoundReturnableError" title="Link to this definition"></a></dt>
+<dd><p>Returned by the tool calls if a file is not found in the repository</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autocommit.utils.FileIsBinaryReturnableError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autocommit.utils.</span></span><span class="sig-name descname"><span class="pre">FileIsBinaryReturnableError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/utils.html#FileIsBinaryReturnableError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.utils.FileIsBinaryReturnableError" title="Link to this definition"></a></dt>
+<dd><p>Returned by the tool calls if a file cannot be printed</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autocommit.utils.FileUnchangedError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autocommit.utils.</span></span><span class="sig-name descname"><span class="pre">FileUnchangedError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/utils.html#FileUnchangedError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.utils.FileUnchangedError" title="Link to this definition"></a></dt>
+<dd><p>Returned by the tool calls if a file has no diff because it did not change</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autocommit.utils.FileNewError">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autocommit.utils.</span></span><span class="sig-name descname"><span class="pre">FileNewError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/utils.html#FileNewError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.utils.FileNewError" title="Link to this definition"></a></dt>
+<dd><p>Returned by the tool calls if a file has no diff because it is new</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.utils.walk_tree">
+<span class="sig-prename descclassname"><span class="pre">autocommit.utils.</span></span><span class="sig-name descname"><span class="pre">walk_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tree</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Blob</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/autocommit/utils.html#walk_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.utils.walk_tree" title="Link to this definition"></a></dt>
+<dd><p>Walk a tree recursively</p>
+<p>Yield all blobs in the tree, and their path relative to the root tree</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tree</strong> (<em>Tree</em>) – The tree to walk</p></li>
+<li><p><strong>base_path</strong> (<em>tuple</em><em>, </em><em>optional</em>) – The path to the current tree. Defaults to ().</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.utils.take_argument_annotation_from">
+<span class="sig-prename descclassname"><span class="pre">autocommit.utils.</span></span><span class="sig-name descname"><span class="pre">take_argument_annotation_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">this</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">P</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">P</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/autocommit/utils.html#take_argument_annotation_from"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.utils.take_argument_annotation_from" title="Link to this definition"></a></dt>
+<dd><p>Take the argument annotations from another function</p>
+<p>Decorator stating that the function it decorates
+should have the same annotations as the function passed as argument.</p>
+<p>Inspired from <a class="reference external" href="https://stackoverflow.com/a/71262408/4948719">https://stackoverflow.com/a/71262408/4948719</a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autocommit.utils.CreateArgumentParserReturnSignature">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autocommit.utils.</span></span><span class="sig-name descname"><span class="pre">CreateArgumentParserReturnSignature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/utils.html#CreateArgumentParserReturnSignature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.utils.CreateArgumentParserReturnSignature" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.utils.create_argument_parser">
+<span class="sig-prename descclassname"><span class="pre">autocommit.utils.</span></span><span class="sig-name descname"><span class="pre">create_argument_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">argparse_kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ArgumentParser</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#autocommit.utils.CreateArgumentParserReturnSignature" title="autocommit.utils.CreateArgumentParserReturnSignature"><span class="pre">CreateArgumentParserReturnSignature</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/autocommit/utils.html#create_argument_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.utils.create_argument_parser" title="Link to this definition"></a></dt>
+<dd><p>Decorator that potentially creates an argument parser and passes it down</p>
+<p>This is a helper function that allows to have a function that either</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>populates an already existing parser</dt><dd><p>(if passed as argument, generally for use with subparsers)</p>
+</dd>
+</dl>
+</li>
+<li><p>creates an all new parser</p></li>
+</ul>
+<p>It decorates a function that takes a single argument, an ArgumentParser,
+and populates it.</p>
+<p>usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># @create_argument_parser</span>
+<span class="c1"># accepts all the arguments of ArgumentParser.</span>
+<span class="c1"># They will be passed to the ArgumentParser constructor</span>
+<span class="c1"># if a new parser is created</span>
+<span class="nd">@create_argument_parser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;This is the description&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">my_argument_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">):</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--my-arg&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;This is the help&quot;</span><span class="p">)</span>
+
+<span class="n">specific_parser</span> <span class="o">=</span> <span class="n">my_argument_parser</span><span class="p">()</span>
+<span class="c1"># or</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">()</span>
+<span class="n">my_argument_parser</span><span class="p">(</span><span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;my_subcommand&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The input function should only take a single argument parser,
+and does not need to return anything.
+The output function will return the parser.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.utils.compute_truncation">
+<span class="sig-prename descclassname"><span class="pre">autocommit.utils.</span></span><span class="sig-name descname"><span class="pre">compute_truncation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lengths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_total_length</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit/utils.html#compute_truncation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.utils.compute_truncation" title="Link to this definition"></a></dt>
+<dd><p>Figure out the truncation of the lengths to fit in max_total_length</p>
+<p>Given a list of lengths <code class="docutils literal notranslate"><span class="pre">[l_1...l_n]</span></code>, and a maximum total length <code class="docutils literal notranslate"><span class="pre">L</span></code>,
+figure out the maximum truncation index <code class="docutils literal notranslate"><span class="pre">t</span></code>, such that the sum of the lengths
+truncated at <code class="docutils literal notranslate"><span class="pre">t</span></code> is less than <code class="docutils literal notranslate"><span class="pre">L</span></code>, ie</p>
+<div class="math notranslate nohighlight">
+\[\sum_{i=1}^n min(l_i, t) &lt; L\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lengths</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – The list of lengths</p></li>
+<li><p><strong>max_total_length</strong> (<em>int</em>) – The maximum total length</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="autocommit.setup.html" class="btn btn-neutral float-left" title="autocommit.setup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="basic_rag.html" class="btn btn-neutral float-right" title="basic_rag" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

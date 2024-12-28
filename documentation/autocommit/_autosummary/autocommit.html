@@ -1,0 +1,276 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>autocommit &mdash; autocommit 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="autocommit.build_ragdb" href="autocommit.build_ragdb.html" />
+    <link rel="prev" title="Adding context to commit messages" href="../context.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            autocommit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Autocommit: automatically write commit messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../context.html">Adding context to commit messages</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">autocommit</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#autocommit.run_argument_parser"><code class="docutils literal notranslate"><span class="pre">run_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autocommit.setup_argument_parser"><code class="docutils literal notranslate"><span class="pre">setup_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autocommit.cleanup_argument_parser"><code class="docutils literal notranslate"><span class="pre">cleanup_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autocommit.build_ragdb_argument_parser"><code class="docutils literal notranslate"><span class="pre">build_ragdb_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autocommit.git_prepare_commit_msg_argument_parser"><code class="docutils literal notranslate"><span class="pre">git_prepare_commit_msg_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autocommit.git_post_commit_argument_parser"><code class="docutils literal notranslate"><span class="pre">git_post_commit_argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autocommit.argument_parser"><code class="docutils literal notranslate"><span class="pre">argument_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autocommit.configure_logging"><code class="docutils literal notranslate"><span class="pre">configure_logging()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autocommit.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autocommit.generate_commit_message"><code class="docutils literal notranslate"><span class="pre">generate_commit_message()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.build_ragdb.html">autocommit.build_ragdb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.commands.html">autocommit.commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.config.html">autocommit.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.git_hooks.html">autocommit.git_hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.mistral_model.html">autocommit.mistral_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.setup.html">autocommit.setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autocommit.utils.html">autocommit.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basic_rag.html">basic_rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mistral_tools.html">mistral_tools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">autocommit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">autocommit</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/autocommit.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-autocommit">
+<span id="autocommit"></span><h1>autocommit<a class="headerlink" href="#module-autocommit" title="Link to this heading"></a></h1>
+<p>Main module for autocommit</p>
+<p>The toplevel module for autocommit mainly contains the command line interface.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.argument_parser" title="autocommit.argument_parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">argument_parser</span></code></a>(parser)</p></td>
+<td><p>The main argument parser for the autocommit command line interface</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.build_ragdb_argument_parser" title="autocommit.build_ragdb_argument_parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_ragdb_argument_parser</span></code></a>(parser)</p></td>
+<td><p>Argument parser for the <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">build-ragdb</span></code> command</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.cleanup_argument_parser" title="autocommit.cleanup_argument_parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cleanup_argument_parser</span></code></a>(parser)</p></td>
+<td><p>Argument parser for the <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">cleanup</span></code> command</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.configure_logging" title="autocommit.configure_logging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure_logging</span></code></a>(loglevel[, logfile])</p></td>
+<td><p>Configures the logging for the program</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.generate_commit_message" title="autocommit.generate_commit_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_commit_message</span></code></a>(repo, key_file[, ...])</p></td>
+<td><p>The main function for autocommit,</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.git_post_commit_argument_parser" title="autocommit.git_post_commit_argument_parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">git_post_commit_argument_parser</span></code></a>(parser)</p></td>
+<td><p>Argument parser for the <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">git_post_commit</span></code> command</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.git_prepare_commit_msg_argument_parser" title="autocommit.git_prepare_commit_msg_argument_parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">git_prepare_commit_msg_argument_parser</span></code></a>(parser)</p></td>
+<td><p>Argument parser for the <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">git_prepare_commit_msg</span></code> command</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.main" title="autocommit.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>()</p></td>
+<td><p>Chooses the action to take based on the command line arguments</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#autocommit.run_argument_parser" title="autocommit.run_argument_parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_argument_parser</span></code></a>(parser)</p></td>
+<td><p>Argument parser for the <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">run</span></code> command</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#autocommit.setup_argument_parser" title="autocommit.setup_argument_parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_argument_parser</span></code></a>(parser)</p></td>
+<td><p>Argument parser for the <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">setup</span></code> command</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.run_argument_parser">
+<span class="sig-prename descclassname"><span class="pre">autocommit.</span></span><span class="sig-name descname"><span class="pre">run_argument_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit.html#run_argument_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.run_argument_parser" title="Link to this definition"></a></dt>
+<dd><p>Argument parser for the <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">run</span></code> command</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.setup_argument_parser">
+<span class="sig-prename descclassname"><span class="pre">autocommit.</span></span><span class="sig-name descname"><span class="pre">setup_argument_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit.html#setup_argument_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.setup_argument_parser" title="Link to this definition"></a></dt>
+<dd><p>Argument parser for the <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">setup</span></code> command</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.cleanup_argument_parser">
+<span class="sig-prename descclassname"><span class="pre">autocommit.</span></span><span class="sig-name descname"><span class="pre">cleanup_argument_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit.html#cleanup_argument_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.cleanup_argument_parser" title="Link to this definition"></a></dt>
+<dd><p>Argument parser for the <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">cleanup</span></code> command</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.build_ragdb_argument_parser">
+<span class="sig-prename descclassname"><span class="pre">autocommit.</span></span><span class="sig-name descname"><span class="pre">build_ragdb_argument_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit.html#build_ragdb_argument_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.build_ragdb_argument_parser" title="Link to this definition"></a></dt>
+<dd><p>Argument parser for the <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">build-ragdb</span></code> command</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.git_prepare_commit_msg_argument_parser">
+<span class="sig-prename descclassname"><span class="pre">autocommit.</span></span><span class="sig-name descname"><span class="pre">git_prepare_commit_msg_argument_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit.html#git_prepare_commit_msg_argument_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.git_prepare_commit_msg_argument_parser" title="Link to this definition"></a></dt>
+<dd><p>Argument parser for the <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">git_prepare_commit_msg</span></code> command</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.git_post_commit_argument_parser">
+<span class="sig-prename descclassname"><span class="pre">autocommit.</span></span><span class="sig-name descname"><span class="pre">git_post_commit_argument_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit.html#git_post_commit_argument_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.git_post_commit_argument_parser" title="Link to this definition"></a></dt>
+<dd><p>Argument parser for the <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">git_post_commit</span></code> command</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.argument_parser">
+<span class="sig-prename descclassname"><span class="pre">autocommit.</span></span><span class="sig-name descname"><span class="pre">argument_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ArgumentParser</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit.html#argument_parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.argument_parser" title="Link to this definition"></a></dt>
+<dd><p>The main argument parser for the autocommit command line interface</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.configure_logging">
+<span class="sig-prename descclassname"><span class="pre">autocommit.</span></span><span class="sig-name descname"><span class="pre">configure_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loglevel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit.html#configure_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.configure_logging" title="Link to this definition"></a></dt>
+<dd><p>Configures the logging for the program</p>
+<p>Enables logging (either to stderr or to a file) for the following packages:</p>
+<ul class="simple">
+<li><p>autocommit</p></li>
+<li><p>basic_rag</p></li>
+<li><p>mistral_tools</p></li>
+</ul>
+<p>with the specified log level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loglevel</strong> (<em>int</em>) – The log level</p></li>
+<li><p><strong>logfile</strong> (<em>Path</em><em>, </em><em>optional</em>) – The file to log to. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.main">
+<span class="sig-prename descclassname"><span class="pre">autocommit.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.main" title="Link to this definition"></a></dt>
+<dd><p>Chooses the action to take based on the command line arguments</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocommit.generate_commit_message">
+<span class="sig-prename descclassname"><span class="pre">autocommit.</span></span><span class="sig-name descname"><span class="pre">generate_commit_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_rag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_tools</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/autocommit.html#generate_commit_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocommit.generate_commit_message" title="Link to this definition"></a></dt>
+<dd><p>The main function for autocommit,</p>
+<p>called when runninng <code class="docutils literal notranslate"><span class="pre">autocommit</span> <span class="pre">run</span></code> from the command line.</p>
+<p>This is a wrapper around <a class="reference internal" href="autocommit.mistral_model.html#autocommit.mistral_model.main" title="autocommit.mistral_model.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">autocommit.mistral_model.main()</span></code></a>
+that loads the api key, and prints the commit message to stdout.</p>
+</dd></dl>
+
+<p class="rubric">Modules</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="autocommit.build_ragdb.html#module-autocommit.build_ragdb" title="autocommit.build_ragdb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_ragdb</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="autocommit.commands.html#module-autocommit.commands" title="autocommit.commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">commands</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="autocommit.config.html#module-autocommit.config" title="autocommit.config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">config</span></code></a></p></td>
+<td><p>Configuration for autocommit</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="autocommit.git_hooks.html#module-autocommit.git_hooks" title="autocommit.git_hooks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">git_hooks</span></code></a></p></td>
+<td><p>Git Hooks</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="autocommit.mistral_model.html#module-autocommit.mistral_model" title="autocommit.mistral_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mistral_model</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="autocommit.setup.html#module-autocommit.setup" title="autocommit.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="autocommit.utils.html#module-autocommit.utils" title="autocommit.utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">utils</span></code></a></p></td>
+<td><p>Miscellaneous utilities for autocommit</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../context.html" class="btn btn-neutral float-left" title="Adding context to commit messages" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="autocommit.build_ragdb.html" class="btn btn-neutral float-right" title="autocommit.build_ragdb" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

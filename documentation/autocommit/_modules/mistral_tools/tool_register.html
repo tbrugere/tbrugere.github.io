@@ -1,0 +1,437 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mistral_tools.tool_register &mdash; autocommit 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2709fde1"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            autocommit
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Autocommit: automatically write commit messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../context.html">Adding context to commit messages</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/autocommit.html">autocommit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/basic_rag.html">basic_rag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_autosummary/mistral_tools.html">mistral_tools</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">autocommit</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mistral_tools.tool_register</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mistral_tools.tool_register</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Registering and binding commands (tools)</span>
+
+<span class="sd">The classes that follow are intended to automate usage of the </span>
+<span class="sd">Mistral tool/function calling api </span>
+<span class="sd">(see https://docs.mistral.ai/capabilities/function_calling/)</span>
+
+<span class="sd">It includes </span>
+
+<span class="sd">- Automatic generation of the json representation of the tools</span>
+<span class="sd">- Binding of parameters (to handle local state. </span>
+<span class="sd">    For example in this codebase, the git repository is passed as a bound parameter)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">signature</span>
+<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">getLogger</span><span class="p">;</span> <span class="n">log</span> <span class="o">=</span> <span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">mistralai</span> <span class="kn">import</span> <span class="n">ToolTypedDict</span>
+
+<div class="viewcode-block" id="ReturnableError">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.ReturnableError">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ReturnableError</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An error message that can be returned by a function</span>
+
+<span class="sd">    and converted to a string (to be sent to the LLM)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">error_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the error to a string&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">error_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="ParameterError">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.ParameterError">[docs]</a>
+<span class="k">class</span> <span class="nc">ParameterError</span><span class="p">(</span><span class="n">ReturnableError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returned by the tool calls if a parameter is incorrect&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;ParameterError&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Parameter">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.Parameter">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Parameter</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A parameter of a command&quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">type</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span>
+
+<div class="viewcode-block" id="Parameter.to_json">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.Parameter.to_json">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the parameter to Mistral api json representation&quot;&quot;&quot;</span>
+        <span class="c1"># TODO: handle more types as needed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span> <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">:</span> <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;integer&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">:</span> <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;boolean&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="nb">float</span><span class="p">:</span> <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;number&quot;</span>
+        <span class="k">else</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported type </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">type_str</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">}</span></div>
+</div>
+
+
+<div class="viewcode-block" id="Command">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.Command">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Command</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A command that can be called by the LLM&quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">]</span>
+    <span class="n">bindable_parameters</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+
+<div class="viewcode-block" id="Command.parameters_to_json">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.Command.parameters_to_json">[docs]</a>
+    <span class="k">def</span> <span class="nf">parameters_to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the parameters to Mistral api json representation&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="n">name</span><span class="p">:</span> <span class="n">parameter</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">},</span> 
+                <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> 
+                             <span class="k">if</span> <span class="ow">not</span> <span class="n">parameter</span><span class="o">.</span><span class="n">optional</span><span class="p">]</span>
+            <span class="p">}</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_to_json_inner</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+            <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters_to_json</span><span class="p">(),</span> 
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="Command.to_json">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.Command.to_json">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the command to Mistral api json representation&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_json_inner</span><span class="p">()</span>
+        <span class="p">}</span></div>
+</div>
+
+
+<div class="viewcode-block" id="CommandRegister">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.CommandRegister">[docs]</a>
+<span class="k">class</span> <span class="nc">CommandRegister</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The main class for registering commands / tools that can be called by the LLM</span>
+
+<span class="sd">    To add a command, use the `register` decorator.</span>
+
+<span class="sd">    To generate the json representation of the commands, use the `to_json` method. </span>
+<span class="sd">    It will ignore the bindable parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bindable_parameters (set[str]): The parameters that can be bound to a value </span>
+<span class="sd">            locally (as opposed to being passed by the LLM)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">commands</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Command</span><span class="p">]</span>
+    <span class="n">bindable_parameters</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bindable_parameters</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bindable_parameters</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bindable_parameters</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CommandRegister.register">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.CommandRegister.register">[docs]</a>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">parameter_descriptions</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decorator to register a command</span>
+
+<span class="sd">        All parameters of the function should be decorated with a type among </span>
+<span class="sd">        ``str``, ``int``, ``float``, ``bool`` (except for the bindable parameters). </span>
+<span class="sd">        This function will use the type annotations to generate the </span>
+<span class="sd">        json representation of the command.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            description (str, optional): The description of the command. Defaults to &quot;&quot;.</span>
+<span class="sd">            parameter_descriptions (dict[str, str], optional): The descriptions of </span>
+<span class="sd">            the parameters. Defaults to &quot;&quot; for every command, </span>
+<span class="sd">            but you should really change that.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">parameter_descriptions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">parameter_descriptions</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+            <span class="k">nonlocal</span> <span class="n">description</span>
+            <span class="k">nonlocal</span> <span class="n">parameter_descriptions</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="n">signature_f</span> <span class="o">=</span> <span class="n">signature</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">bindable_parameters</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">signature_f</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bindable_parameters</span><span class="p">:</span>
+                    <span class="n">bindable_parameters</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span> 
+                    <span class="n">parameters</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_of_inspected</span><span class="p">(</span>
+                            <span class="n">param</span><span class="p">,</span> <span class="n">parameter_descriptions</span><span class="p">)</span>
+
+            <span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">bindable_parameters</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">command</span>
+            <span class="k">return</span> <span class="n">f</span>
+        <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+<div class="viewcode-block" id="CommandRegister.parameter_of_inspected">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.CommandRegister.parameter_of_inspected">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">parameter_of_inspected</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="p">,</span> <span class="n">descriptions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Parameter</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a :class:`parameter` from inspecting a functions&#39;s parameters&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">annotation</span> <span class="o">==</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter </span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> has no type annotation&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> 
+                         <span class="n">p</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> 
+                         <span class="n">descriptions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> 
+                         <span class="n">optional</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">default</span> <span class="o">!=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">empty</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CommandRegister.to_json">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.CommandRegister.to_json">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ToolTypedDict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the json representation of the commands. </span>
+
+<span class="sd">        This can be passed directly as the tools parameters to </span>
+<span class="sd">        :func:`Mistral.chat.complete`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span>  <span class="p">[</span> <span class="n">command</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span> <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="p">]</span>   </div>
+
+
+<div class="viewcode-block" id="CommandRegister.bind">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.CommandRegister.bind">[docs]</a>
+    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">bound_parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Bind the parameters to the commands.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            **bound_parameters: The parameters to bind</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            BoundCommandRegister: A bound version of the command register.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">bound_parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bindable_parameters</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> is not bindable&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">BoundCommandRegister</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bound_parameters</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="BoundCommandRegister">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.BoundCommandRegister">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">BoundCommandRegister</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A command register with bound parameters.</span>
+
+<span class="sd">    This object behaves like the BoundCommandRegister, </span>
+<span class="sd">    except bound commands can be accessed with the getitem operator like so:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        commands = CommandRegister(bindable_parameters=(&quot;df&quot;,))</span>
+
+<span class="sd">        @commands.register(</span>
+<span class="sd">                description=&quot;Get payment status of a transaction&quot;, </span>
+<span class="sd">                parameter_descriptions={&quot;transaction_id&quot;: &quot;The transaction id.&quot;,})</span>
+<span class="sd">        def retrieve_payment_status(*, df: data, transaction_id: str) -&gt; str:</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        bound_commands = commands.bind(df=df)</span>
+
+<span class="sd">        bound_commands[&quot;retrieve_payment_status&quot;](transaction_id=&quot;1234&quot;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">command_register</span><span class="p">:</span> <span class="n">CommandRegister</span>
+    <span class="n">bound_parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a bound command by name&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_register</span><span class="o">.</span><span class="n">commands</span><span class="p">:</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_register</span><span class="o">.</span><span class="n">commands</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bind_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Command </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BoundCommandRegister.bind_command">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.BoundCommandRegister.bind_command">[docs]</a>
+    <span class="k">def</span> <span class="nf">bind_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="n">Command</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the bound version of the command</span>
+<span class="sd">        </span>
+<span class="sd">        Returns the underlying function of the command, with </span>
+<span class="sd">        - the bound parameters already filled in</span>
+<span class="sd">        - ensuring that the returnable errors are changed into strings</span>
+
+<span class="sd">        In general, this is called by the :func:``__getitem__`` method, </span>
+<span class="sd">        you should not have to call it directly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">bound_command</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">bound_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bind_parameters</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">bindable_parameters</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bound_parameters</span><span class="p">,</span> <span class="n">ReturnableError</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_returnable_error</span><span class="p">(</span><span class="n">bound_parameters</span><span class="p">)</span>
+            <span class="n">check_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_parameters</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">bound_parameters</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">check_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_returnable_error</span><span class="p">(</span><span class="n">check_result</span><span class="p">)</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="n">command</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="o">**</span><span class="n">bound_parameters</span><span class="p">)</span>
+            <span class="c1"># potentially handle returnable errors here</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ReturnableError</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_returnable_error</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">bound_command</span></div>
+
+
+<div class="viewcode-block" id="BoundCommandRegister.bind_parameters">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.BoundCommandRegister.bind_parameters">[docs]</a>
+    <span class="k">def</span> <span class="nf">bind_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bindable_parameters</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Bind the parameters to the command, and return the bound parameters&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">bindable_parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span> 
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2"> is bindable, it should not be passed&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">ParameterError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No such parameter: </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound_parameters</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="BoundCommandRegister.check_parameters">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.BoundCommandRegister.check_parameters">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="n">Command</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that the parameters are correct for the command&quot;&quot;&quot;</span>
+        <span class="c1"># 1. check that the given parameters are correct and the right typ</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">command</span><span class="o">.</span><span class="n">bindable_parameters</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ParameterError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No such parameter: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">command</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">ParameterError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not of the right type&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 2. check that there are no missing parameters</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">command</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">parameter</span><span class="o">.</span><span class="n">optional</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ParameterError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing parameter </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="BoundCommandRegister.to_json">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.BoundCommandRegister.to_json">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the json representation of the commands.</span>
+
+<span class="sd">        This command simply calls the to_json method of the underlying command register.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">command_register</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BoundCommandRegister.handle_returnable_error">
+<a class="viewcode-back" href="../../_autosummary/mistral_tools.tool_register.html#mistral_tools.tool_register.BoundCommandRegister.handle_returnable_error">[docs]</a>
+    <span class="k">def</span> <span class="nf">handle_returnable_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="n">ReturnableError</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a returnable error to a string</span>
+
+<span class="sd">        This can be overriden in a subclass to handle the errors differently&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)</span></div>
+</div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tristan Brugère.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
