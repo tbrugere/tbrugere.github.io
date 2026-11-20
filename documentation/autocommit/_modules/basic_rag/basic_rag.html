@@ -6,8 +6,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>basic_rag.basic_rag &mdash; autocommit 0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
@@ -75,27 +75,27 @@
            <div itemprop="articleBody">
              
   <h1>Source code for basic_rag.basic_rag</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Basic RAG database&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha1</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span></span><span class="sd">"""Basic RAG database"""</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hashlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">sha1</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
-<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
 
-<span class="kn">from</span> <span class="nn">mistral_tools.utils</span> <span class="kn">import</span> <span class="n">RateLimiter</span>
-<span class="kn">from</span> <span class="nn">mistral_tools.embeddings</span> <span class="kn">import</span> <span class="n">EmbeddingModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mistral_tools.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateLimiter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mistral_tools.embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmbeddingModel</span>
 
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="s2">&quot;faiss&quot;</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">faiss</span> <span class="c1"># noqa: E402</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="s2">"faiss"</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">faiss</span> <span class="c1"># noqa: E402</span>
 
 <div class="viewcode-block" id="TextChunk">
 <a class="viewcode-back" href="../../_autosummary/basic_rag.basic_rag.html#basic_rag.TextChunk">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">TextChunk</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A text chunk with metadata&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TextChunk</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A text chunk with metadata"""</span>
     <span class="n">text_chunk</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">start_line</span><span class="p">:</span> <span class="nb">int</span>
@@ -106,17 +106,17 @@
 
 <div class="viewcode-block" id="TextChunk.to_str">
 <a class="viewcode-back" href="../../_autosummary/basic_rag.basic_rag.html#basic_rag.TextChunk.to_str">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pretty print the text chunk&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;----</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="si">}</span><span class="s2">: l.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_line</span><span class="si">}</span><span class="s2"> &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;to l.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">end_line</span><span class="si">}</span><span class="s2">-----</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">text_chunk</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Pretty print the text chunk"""</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"----</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="si">}</span><span class="s2">: l.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">start_line</span><span class="si">}</span><span class="s2"> "</span>
+                <span class="sa">f</span><span class="s2">"to l.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">end_line</span><span class="si">}</span><span class="s2">-----</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">text_chunk</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 </div>
 
 
 <div class="viewcode-block" id="RAGDatabase">
 <a class="viewcode-back" href="../../_autosummary/basic_rag.basic_rag.html#basic_rag.RAGDatabase">[docs]</a>
-<span class="k">class</span> <span class="nc">RAGDatabase</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple RAG database</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RAGDatabase</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Simple RAG database</span>
 
 <span class="sd">    implemented as</span>
 
@@ -127,7 +127,7 @@
 <span class="sd">    I ended up re-coding this because I was not able to find a RAG database</span>
 <span class="sd">    that was both simple enough (no server needed, no huge framework) </span>
 <span class="sd">    and flexible enough.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">db_path</span><span class="p">:</span> <span class="n">Path</span>
     <span class="n">index_path</span><span class="p">:</span> <span class="n">Path</span>
@@ -142,22 +142,22 @@
     <span class="n">model</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">max_n_tokens</span><span class="p">:</span> <span class="nb">int</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">index_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> 
-                 <span class="n">rate_limit</span><span class="p">:</span> <span class="n">RateLimiter</span><span class="o">|</span><span class="nb">float</span> <span class="o">=</span> <span class="mf">1.1</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;mistral-embed&quot;</span><span class="p">,</span> 
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">index_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> 
+                 <span class="n">rate_limit</span><span class="p">:</span> <span class="n">RateLimiter</span><span class="o">|</span><span class="nb">float</span> <span class="o">=</span> <span class="mf">1.1</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"mistral-embed"</span><span class="p">,</span> 
                  <span class="n">max_n_tokens</span><span class="o">=</span><span class="mi">16384</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db_path</span> <span class="o">=</span> <span class="n">db_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index_path</span> <span class="o">=</span> <span class="n">index_path</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE IF NOT EXISTS rag &quot;</span>
-            <span class="s2">&quot;(id INTEGER PRIMARY KEY, text_chunk TEXT, embedding NULLABLE BLOB, &quot;</span>
-            <span class="s2">&quot;file_path TEXT, start_line INTEGER, end_line INTEGER, file_sha BLOB)&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"CREATE TABLE IF NOT EXISTS rag "</span>
+            <span class="s2">"(id INTEGER PRIMARY KEY, text_chunk TEXT, embedding NULLABLE BLOB, "</span>
+            <span class="s2">"file_path TEXT, start_line INTEGER, end_line INTEGER, file_sha BLOB)"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_n_tokens</span> <span class="o">=</span> <span class="n">max_n_tokens</span>
 
-        <span class="n">max_id</span><span class="p">,</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT MAX(id) FROM rag&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+        <span class="n">max_id</span><span class="p">,</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT MAX(id) FROM rag"</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
         <span class="n">max_id</span> <span class="o">=</span> <span class="n">max_id</span> <span class="k">if</span> <span class="n">max_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_id</span> <span class="o">=</span> <span class="n">max_id</span>
 
@@ -176,14 +176,14 @@
 
 <div class="viewcode-block" id="RAGDatabase.insert_db">
 <a class="viewcode-back" href="../../_autosummary/basic_rag.basic_rag.html#basic_rag.RAGDatabase.insert_db">[docs]</a>
-    <span class="k">def</span> <span class="nf">insert_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk</span><span class="p">:</span> <span class="n">TextChunk</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>  <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="n">embedding</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk</span><span class="p">:</span> <span class="n">TextChunk</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>  <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="n">embedding</span><span class="p">,</span>
                   <span class="n">do_commit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">add_to_index</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert a text chunk into the sqlite database and the index&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Insert a text chunk into the sqlite database and the index"""</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
             <span class="nb">id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_id</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">max_id</span> <span class="o">=</span> <span class="nb">id</span>
-        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;INSERT INTO rag VALUES(?, ?, ?, ?, ?, ?, ?)&quot;</span><span class="p">,</span> 
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"INSERT INTO rag VALUES(?, ?, ?, ?, ?, ?, ?)"</span><span class="p">,</span> 
                 <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">chunk</span><span class="o">.</span><span class="n">text_chunk</span><span class="p">,</span> 
                  <span class="n">embedding</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">file_path</span><span class="p">),</span> <span class="n">chunk</span><span class="o">.</span><span class="n">start_line</span><span class="p">,</span> 
                                 <span class="n">chunk</span><span class="o">.</span><span class="n">end_line</span><span class="p">,</span> <span class="n">chunk</span><span class="o">.</span><span class="n">file_hash</span><span class="p">))</span>
@@ -199,8 +199,8 @@
 <div class="viewcode-block" id="RAGDatabase.get_chunks">
 <a class="viewcode-back" href="../../_autosummary/basic_rag.basic_rag.html#basic_rag.RAGDatabase.get_chunks">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_chunks</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="nb">hash</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cut a file into chunks</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_chunks</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="nb">hash</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Cut a file into chunks</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            file: a Path or bytes object</span>
@@ -208,7 +208,7 @@
 <span class="sd">            overlap: the overlap between the chunks</span>
 <span class="sd">            filename: the filename</span>
 <span class="sd">            hash: the hash of the file (optional)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">chunk_limits</span> <span class="o">=</span> <span class="n">chunk_size</span> <span class="o">-</span> <span class="n">overlap</span>
         <span class="k">try</span><span class="p">:</span> 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span> <span class="n">lines</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
@@ -220,17 +220,17 @@
         <span class="n">chunk_starts</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_lines</span><span class="p">,</span> <span class="n">chunk_limits</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="n">chunk_starts</span><span class="p">:</span>
             <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_lines</span><span class="p">,</span> <span class="n">start</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">)</span>
-            <span class="k">yield</span> <span class="n">TextChunk</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]),</span> <span class="n">filename</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> 
+            <span class="k">yield</span> <span class="n">TextChunk</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]),</span> <span class="n">filename</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> 
                             <span class="n">file_hash</span><span class="o">=</span><span class="nb">hash</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RAGDatabase.get_all_chunks">
 <a class="viewcode-back" href="../../_autosummary/basic_rag.basic_rag.html#basic_rag.RAGDatabase.get_all_chunks">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_all_chunks</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Path</span><span class="o">|</span><span class="nb">bytes</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_chunks</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Path</span><span class="o">|</span><span class="nb">bytes</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> 
                        <span class="n">overlap</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">file_paths</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                        <span class="n">file_shas_to_skip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cut a list of files into chunks</span>
+<span class="w">        </span><span class="sd">"""Cut a list of files into chunks</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            files: the files</span>
@@ -240,7 +240,7 @@
 <span class="sd">                                       and the files are Path objects</span>
 <span class="sd">                                       the filenames will be the paths)</span>
 <span class="sd">            file_shas_to_skip: the file hashes to skip</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">file_paths</span> <span class="o">=</span> <span class="n">file_paths</span> <span class="ow">or</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">file_shas_to_skip</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">file_shas_to_skip</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span> <span class="n">file_shas_to_skip</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">file_shas_to_skip</span><span class="p">)</span>
@@ -255,10 +255,10 @@
 
 <div class="viewcode-block" id="RAGDatabase.generate_index">
 <a class="viewcode-back" href="../../_autosummary/basic_rag.basic_rag.html#basic_rag.RAGDatabase.generate_index">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Path</span><span class="o">|</span><span class="nb">bytes</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Path</span><span class="o">|</span><span class="nb">bytes</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
                        <span class="n">overlap</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">file_paths</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                        <span class="n">file_shas_to_skip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the index from a list of files&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Generate the index from a list of files"""</span>
         <span class="n">all_chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_all_chunks</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="n">chunk_size</span><span class="p">,</span> 
                                               <span class="n">overlap</span><span class="o">=</span><span class="n">overlap</span><span class="p">,</span> <span class="n">file_paths</span><span class="o">=</span><span class="n">file_paths</span><span class="p">,</span> 
                                               <span class="n">file_shas_to_skip</span><span class="o">=</span><span class="n">file_shas_to_skip</span><span class="p">))</span>
@@ -291,54 +291,57 @@
 
 <div class="viewcode-block" id="RAGDatabase.commit">
 <a class="viewcode-back" href="../../_autosummary/basic_rag.basic_rag.html#basic_rag.RAGDatabase.commit">[docs]</a>
-    <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write changes to disk</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Write changes to disk</span>
 
 <span class="sd">        do a database commit, and write the index</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
         <span class="n">faiss</span><span class="o">.</span><span class="n">write_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_path</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="RAGDatabase.get_chunk_by_id">
 <a class="viewcode-back" href="../../_autosummary/basic_rag.basic_rag.html#basic_rag.RAGDatabase.get_chunk_by_id">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_chunk_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a chunk from database by its id&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_chunk_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get a chunk from database by its id"""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span> <span class="nb">id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT text_chunk, file_path, start_line, &quot;</span>
-                              <span class="s2">&quot;end_line, file_sha FROM rag WHERE id = ?&quot;</span><span class="p">,</span> 
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT text_chunk, file_path, start_line, "</span>
+                              <span class="s2">"end_line, file_sha FROM rag WHERE id = ?"</span><span class="p">,</span> 
                               <span class="p">(</span><span class="nb">id</span><span class="p">,))</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Chunk with id </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2"> not found"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">TextChunk</span><span class="p">(</span><span class="o">*</span><span class="n">res</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RAGDatabase.query">
 <a class="viewcode-back" href="../../_autosummary/basic_rag.basic_rag.html#basic_rag.RAGDatabase.query">[docs]</a>
-    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do a Knn search on the index&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">n_results</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">TextChunk</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Do a Knn search on the index"""</span>
         <span class="n">embedding_model</span> <span class="o">=</span> <span class="n">EmbeddingModel</span><span class="p">(</span>
                 <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">max_n_tokens</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_n_tokens</span><span class="p">,</span> 
                 <span class="n">rate_limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rate_limit</span><span class="p">)</span>
         <span class="n">query_embedding</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">embedding_model</span><span class="o">.</span><span class="n">get_embeddings_batched</span><span class="p">([</span><span class="n">query</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">query_embedding</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Query too long&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Query too long"</span><span class="p">)</span>
         <span class="n">scores</span><span class="p">,</span> <span class="n">ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n_results</span><span class="p">)</span> <span class="c1"># type: ignore</span>
-        <span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_chunk_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_chunk_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                  <span class="k">if</span> <span class="nb">id</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># -1 is returned when there are not enough results</span>
         <span class="k">return</span> <span class="n">chunks</span><span class="p">,</span> <span class="n">scores</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
         
 <div class="viewcode-block" id="RAGDatabase.update_index">
 <a class="viewcode-back" href="../../_autosummary/basic_rag.basic_rag.html#basic_rag.RAGDatabase.update_index">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Path</span><span class="o">|</span><span class="nb">bytes</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Path</span><span class="o">|</span><span class="nb">bytes</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">api_key</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> 
                      <span class="n">overlap</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">file_paths</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the index from a list of files.</span>
+<span class="w">        </span><span class="sd">"""Update the index from a list of files.</span>
 
 <span class="sd">        Like generate_index, but preemptively checks which files have changed, </span>
 <span class="sd">        and only updates those.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">files_shas_in_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span>\
-                <span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT DISTINCT file_sha FROM rag&quot;</span><span class="p">)</span>\
+                <span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT DISTINCT file_sha FROM rag"</span><span class="p">)</span>\
                 <span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
         <span class="n">files_shas_in_db</span>  <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">sha</span> <span class="k">for</span> <span class="n">sha</span><span class="p">,</span> <span class="ow">in</span> <span class="n">files_shas_in_db</span><span class="p">])</span>
         <span class="n">new_shas</span> <span class="o">=</span> <span class="p">[]</span>
@@ -351,16 +354,16 @@
 
         <span class="n">deleted_shas</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">new_shas</span> <span class="o">-</span> <span class="n">files_shas_in_db</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TEMP TABLE deleted_shas (sha BLOB)&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s2">&quot;INSERT INTO deleted_shas VALUES (?)&quot;</span><span class="p">,</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"CREATE TEMP TABLE deleted_shas (sha BLOB)"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s2">"INSERT INTO deleted_shas VALUES (?)"</span><span class="p">,</span> 
                             <span class="p">[(</span><span class="n">sha</span><span class="p">,)</span> <span class="k">for</span> <span class="n">sha</span> <span class="ow">in</span> <span class="n">deleted_shas</span><span class="p">]</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
         <span class="n">deleted_shas_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                <span class="s2">&quot;SELECT id FROM rag INNER JOIN deleted_shas &quot;</span>
-                <span class="s2">&quot;ON rag.file_sha = deleted_shas.sha&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DELETE FROM rag WHERE file_sha IN deleted_shas&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DROP TABLE deleted_shas&quot;</span><span class="p">)</span>
+                <span class="s2">"SELECT id FROM rag INNER JOIN deleted_shas "</span>
+                <span class="s2">"ON rag.file_sha = deleted_shas.sha"</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"DELETE FROM rag WHERE file_sha IN deleted_shas"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"DROP TABLE deleted_shas"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">remove_ids</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">id</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="ow">in</span> <span class="n">deleted_shas_ids</span><span class="p">]))</span>
         <span class="c1"># self.commit() # only commit after the full update is done</span>
         <span class="c1"># to avoid failing with a transient state on disk</span>

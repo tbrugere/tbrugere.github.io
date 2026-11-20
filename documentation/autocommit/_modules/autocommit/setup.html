@@ -6,8 +6,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>autocommit.setup &mdash; autocommit 0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
@@ -76,49 +76,50 @@
            <div itemprop="articleBody">
              
   <h1>Source code for autocommit.setup</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Final</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Final</span>
 
-<span class="kn">from</span> <span class="nn">autocommit.config</span> <span class="kn">import</span> <span class="n">Config</span>
-<span class="kn">from</span> <span class="nn">autocommit.utils</span> <span class="kn">import</span> <span class="n">get_api_key</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">autocommit.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">autocommit.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_api_key</span>
 
-<span class="n">autocommit_storage_dir</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.autocommit_storage_dir&quot;</span><span class="p">)</span>
+<span class="n">autocommit_storage_dir</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">".autocommit_storage_dir"</span><span class="p">)</span>
 
-<span class="n">prepare_commit_msg_hook</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;exec autocommit git_prepare_commit_msg </span><span class="se">\&quot;</span><span class="s2">$@</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
-<span class="n">post_commit_hook</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;exec autocommit git_post_commit&quot;</span>
+<span class="n">prepare_commit_msg_hook</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"exec autocommit git_prepare_commit_msg </span><span class="se">\"</span><span class="s2">$@</span><span class="se">\"</span><span class="s2">"</span>
+<span class="n">post_commit_hook</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"exec autocommit git_post_commit"</span>
 
 
 <div class="viewcode-block" id="add_storage_dir_to_exclude">
 <a class="viewcode-back" href="../../_autosummary/autocommit.setup.html#autocommit.setup.add_storage_dir_to_exclude">[docs]</a>
-<span class="k">def</span> <span class="nf">add_storage_dir_to_exclude</span><span class="p">(</span><span class="n">gitdir</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add .autocommit_storage_dir/ to the .git/info/exclude file</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_storage_dir_to_exclude</span><span class="p">(</span><span class="n">gitdir</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Add .autocommit_storage_dir/ to the .git/info/exclude file</span>
 
 <span class="sd">    unless it is already there. This serves to avoid tracking the storage directory,</span>
 <span class="sd">    which contains the api key.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">autocommit_storage_dir</span><span class="si">}</span><span class="s2">/&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">autocommit_storage_dir</span><span class="si">}</span><span class="s2">/"</span>
 
-    <span class="n">exclude_path</span> <span class="o">=</span> <span class="n">gitdir</span> <span class="o">/</span> <span class="s2">&quot;info&quot;</span> <span class="o">/</span> <span class="s2">&quot;exclude&quot;</span>
+    <span class="n">exclude_path</span> <span class="o">=</span> <span class="n">gitdir</span> <span class="o">/</span> <span class="s2">"info"</span> <span class="o">/</span> <span class="s2">"exclude"</span>
 
     <span class="n">pattern_already_there</span> <span class="o">=</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> 
                                         <span class="ow">in</span> <span class="n">exclude_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()]</span>
     <span class="k">if</span> <span class="n">pattern_already_there</span><span class="p">:</span>
         <span class="k">return</span>
 
-    <span class="k">with</span> <span class="n">exclude_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pattern</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+    <span class="k">with</span> <span class="n">exclude_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"a"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pattern</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="add_key_to_tree">
 <a class="viewcode-back" href="../../_autosummary/autocommit.setup.html#autocommit.setup.add_key_to_tree">[docs]</a>
-<span class="k">def</span> <span class="nf">add_key_to_tree</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">worktree</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds the api key to the worktree&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_key_to_tree</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">worktree</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Adds the api key to the worktree"""</span>
     <span class="n">storage_dir</span> <span class="o">=</span> <span class="n">worktree</span> <span class="o">/</span> <span class="n">autocommit_storage_dir</span>
     <span class="n">storage_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">storage_dir</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="mo">0o700</span><span class="p">)</span>
-    <span class="n">key_file</span> <span class="o">=</span> <span class="n">storage_dir</span> <span class="o">/</span> <span class="s2">&quot;api_key&quot;</span>
+    <span class="n">key_file</span> <span class="o">=</span> <span class="n">storage_dir</span> <span class="o">/</span> <span class="s2">"api_key"</span>
     <span class="n">key_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
     <span class="n">key_file</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="mo">0o600</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">key_file</span></div>
@@ -126,35 +127,35 @@
 
 <div class="viewcode-block" id="check_repo_bare">
 <a class="viewcode-back" href="../../_autosummary/autocommit.setup.html#autocommit.setup.check_repo_bare">[docs]</a>
-<span class="k">def</span> <span class="nf">check_repo_bare</span><span class="p">(</span><span class="n">repo</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if the repo is bare&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">repo</span> <span class="o">/</span> <span class="s2">&quot;.git&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_repo_bare</span><span class="p">(</span><span class="n">repo</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Checks if the repo is bare"""</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">repo</span> <span class="o">/</span> <span class="s2">".git"</span><span class="p">)</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="add_commit_hook">
 <a class="viewcode-back" href="../../_autosummary/autocommit.setup.html#autocommit.setup.add_commit_hook">[docs]</a>
-<span class="k">def</span> <span class="nf">add_commit_hook</span><span class="p">(</span><span class="n">repo</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">hook_name</span><span class="o">=</span><span class="s2">&quot;prepare-commit-msg&quot;</span><span class="p">,</span> <span class="n">hook_content</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds the commit hook to the repository&quot;&quot;&quot;</span>
-    <span class="n">hook_path</span> <span class="o">=</span> <span class="n">repo</span> <span class="o">/</span> <span class="s2">&quot;hooks&quot;</span> <span class="o">/</span> <span class="n">hook_name</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_commit_hook</span><span class="p">(</span><span class="n">repo</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">hook_name</span><span class="o">=</span><span class="s2">"prepare-commit-msg"</span><span class="p">,</span> <span class="n">hook_content</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Adds the commit hook to the repository"""</span>
+    <span class="n">hook_path</span> <span class="o">=</span> <span class="n">repo</span> <span class="o">/</span> <span class="s2">"hooks"</span> <span class="o">/</span> <span class="n">hook_name</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">hook_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">hook_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#!/bin/sh</span><span class="se">\n</span><span class="si">{</span><span class="n">hook_content</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">hook_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"#!/bin/sh</span><span class="se">\n</span><span class="si">{</span><span class="n">hook_content</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">hook_path</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="mo">0o755</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="n">hook_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">hook_content</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="k">with</span> <span class="n">hook_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">hook_content</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">with</span> <span class="n">hook_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"a"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">hook_content</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="remove_commit_hook">
 <a class="viewcode-back" href="../../_autosummary/autocommit.setup.html#autocommit.setup.remove_commit_hook">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_commit_hook</span><span class="p">(</span><span class="n">repo</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">hook_name</span><span class="o">=</span><span class="s2">&quot;prepare-commit-msg&quot;</span><span class="p">,</span> <span class="n">hook_content</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes the commit hook from the repository&quot;&quot;&quot;</span>
-    <span class="n">hook_path</span> <span class="o">=</span> <span class="n">repo</span> <span class="o">/</span> <span class="s2">&quot;hooks&quot;</span> <span class="o">/</span> <span class="n">hook_name</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_commit_hook</span><span class="p">(</span><span class="n">repo</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">hook_name</span><span class="o">=</span><span class="s2">"prepare-commit-msg"</span><span class="p">,</span> <span class="n">hook_content</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Removes the commit hook from the repository"""</span>
+    <span class="n">hook_path</span> <span class="o">=</span> <span class="n">repo</span> <span class="o">/</span> <span class="s2">"hooks"</span> <span class="o">/</span> <span class="n">hook_name</span>
 
-    <span class="kn">import</span> <span class="nn">pdb</span><span class="p">;</span> <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pdb</span><span class="p">;</span> <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">hook_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">return</span>
 
@@ -162,22 +163,22 @@
     <span class="k">if</span> <span class="n">hook_content</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="n">lines</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">hook_content</span><span class="p">)</span>
-    <span class="n">hook_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+    <span class="n">hook_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_repo_worktree">
 <a class="viewcode-back" href="../../_autosummary/autocommit.setup.html#autocommit.setup.get_repo_worktree">[docs]</a>
-<span class="k">def</span> <span class="nf">get_repo_worktree</span><span class="p">(</span><span class="n">repo</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">worktree</span><span class="p">:</span> <span class="n">Path</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Gets the repo and worktree paths&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_repo_worktree</span><span class="p">(</span><span class="n">repo</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">worktree</span><span class="p">:</span> <span class="n">Path</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Gets the repo and worktree paths"""</span>
     <span class="k">if</span> <span class="n">worktree</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">check_repo_bare</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot specify a worktree for a non-bare repository&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cannot specify a worktree for a non-bare repository"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">worktree</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">check_repo_bare</span><span class="p">(</span><span class="n">repo</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot run setup on a bare repository&quot;</span>
-                             <span class="s2">&quot; without specifying a worktree&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cannot run setup on a bare repository"</span>
+                             <span class="s2">" without specifying a worktree"</span><span class="p">)</span>
         <span class="n">worktree</span> <span class="o">=</span> <span class="n">repo</span>
-        <span class="n">repo</span> <span class="o">=</span> <span class="n">repo</span> <span class="o">/</span> <span class="s2">&quot;.git&quot;</span>
+        <span class="n">repo</span> <span class="o">=</span> <span class="n">repo</span> <span class="o">/</span> <span class="s2">".git"</span>
     <span class="k">assert</span> <span class="n">worktree</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="k">return</span> <span class="n">repo</span><span class="p">,</span> <span class="n">worktree</span></div>
 
@@ -185,9 +186,9 @@
 
 <div class="viewcode-block" id="run_setup">
 <a class="viewcode-back" href="../../_autosummary/autocommit.setup.html#autocommit.setup.run_setup">[docs]</a>
-<span class="k">def</span> <span class="nf">run_setup</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">isolation</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">worktree</span><span class="p">:</span> <span class="n">Path</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">run_setup</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">isolation</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">worktree</span><span class="p">:</span> <span class="n">Path</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
               <span class="n">enable_rag</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">enable_function_calls</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs the setup for the repository&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Runs the setup for the repository"""</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
         <span class="n">enable_rag</span><span class="o">=</span><span class="n">enable_rag</span><span class="p">,</span>
         <span class="n">isolation</span><span class="o">=</span><span class="n">isolation</span><span class="p">,</span>
@@ -198,26 +199,28 @@
     <span class="n">key</span> <span class="o">=</span> <span class="n">get_api_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">isolation</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Isolation is not implemented yet&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Isolation is not implemented yet"</span><span class="p">)</span>
 
     <span class="n">repo</span><span class="p">,</span> <span class="n">worktree</span> <span class="o">=</span> <span class="n">get_repo_worktree</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">worktree</span><span class="p">)</span>
     <span class="nb">dir</span> <span class="o">=</span> <span class="n">worktree</span> <span class="o">/</span> <span class="n">autocommit_storage_dir</span>
     <span class="nb">dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">config</span><span class="o">.</span><span class="n">to_json_file</span><span class="p">(</span><span class="nb">dir</span> <span class="o">/</span> <span class="s2">&quot;config.json&quot;</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">to_json_file</span><span class="p">(</span><span class="nb">dir</span> <span class="o">/</span> <span class="s2">"config.json"</span><span class="p">)</span>
 
     <span class="n">add_storage_dir_to_exclude</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
     <span class="n">_</span><span class="o">=</span> <span class="n">add_key_to_tree</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">worktree</span><span class="p">)</span>
 
     <span class="c1"># git hooks</span>
-    <span class="n">autocommit_line</span> <span class="o">=</span> <span class="s1">&#39;exec autocommit git_prepare_commit_msg </span><span class="se">\&quot;</span><span class="s1">$@</span><span class="se">\&quot;</span><span class="s1">&#39;</span>
-    <span class="n">add_commit_hook</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">hook_name</span><span class="o">=</span><span class="s2">&quot;prepare-commit-msg&quot;</span><span class="p">,</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"Setting commit hooks...</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">autocommit_line</span> <span class="o">=</span> <span class="s1">'exec autocommit git_prepare_commit_msg </span><span class="se">\"</span><span class="s1">$@</span><span class="se">\"</span><span class="s1">'</span>
+    <span class="n">add_commit_hook</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">hook_name</span><span class="o">=</span><span class="s2">"prepare-commit-msg"</span><span class="p">,</span>
                     <span class="n">hook_content</span><span class="o">=</span><span class="n">autocommit_line</span><span class="p">)</span>
 
     <span class="c1"># build ragdb</span>
     <span class="k">if</span> <span class="n">enable_rag</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">autocommit.build_ragdb</span> <span class="kn">import</span> <span class="n">build_ragdb</span>
-        <span class="n">add_commit_hook</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">hook_name</span><span class="o">=</span><span class="s2">&quot;post-commit&quot;</span><span class="p">,</span> 
+        <span class="kn">from</span><span class="w"> </span><span class="nn">autocommit.build_ragdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_ragdb</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"Indexing repository, this may take a minute...</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">add_commit_hook</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">hook_name</span><span class="o">=</span><span class="s2">"post-commit"</span><span class="p">,</span> 
                         <span class="n">hook_content</span><span class="o">=</span><span class="n">post_commit_hook</span><span class="p">)</span>
         <span class="n">build_ragdb</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">worktree</span><span class="p">),</span> <span class="n">update</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
@@ -225,17 +228,17 @@
 
 <div class="viewcode-block" id="run_cleanup">
 <a class="viewcode-back" href="../../_autosummary/autocommit.setup.html#autocommit.setup.run_cleanup">[docs]</a>
-<span class="k">def</span> <span class="nf">run_cleanup</span><span class="p">(</span><span class="n">repo</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">worktree</span><span class="p">:</span> <span class="n">Path</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cleans up the autocommit setup&quot;&quot;&quot;</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_cleanup</span><span class="p">(</span><span class="n">repo</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">worktree</span><span class="p">:</span> <span class="n">Path</span><span class="o">|</span><span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Cleans up the autocommit setup"""</span>
     <span class="n">repo</span><span class="p">,</span> <span class="n">worktree</span> <span class="o">=</span> <span class="n">get_repo_worktree</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">worktree</span><span class="p">)</span>
     
     <span class="nb">dir</span> <span class="o">=</span> <span class="n">worktree</span> <span class="o">/</span> <span class="n">autocommit_storage_dir</span>
 
     <span class="k">if</span> <span class="nb">dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
-    <span class="n">remove_commit_hook</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">hook_name</span><span class="o">=</span><span class="s2">&quot;prepare-commit-msg&quot;</span><span class="p">,</span> 
+    <span class="n">remove_commit_hook</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">hook_name</span><span class="o">=</span><span class="s2">"prepare-commit-msg"</span><span class="p">,</span> 
                        <span class="n">hook_content</span><span class="o">=</span><span class="n">prepare_commit_msg_hook</span><span class="p">)</span>
-    <span class="n">remove_commit_hook</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">hook_name</span><span class="o">=</span><span class="s2">&quot;post-commit&quot;</span><span class="p">,</span> 
+    <span class="n">remove_commit_hook</span><span class="p">(</span><span class="n">repo</span><span class="p">,</span> <span class="n">hook_name</span><span class="o">=</span><span class="s2">"post-commit"</span><span class="p">,</span> 
                        <span class="n">hook_content</span><span class="o">=</span><span class="n">post_commit_hook</span><span class="p">)</span></div>
 
 

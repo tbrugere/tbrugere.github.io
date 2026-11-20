@@ -6,8 +6,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>mistral_tools.utils &mdash; autocommit 0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
@@ -75,13 +75,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for mistral_tools.utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Miscellaneous utility functions and classes&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<span></span><span class="sd">"""Miscellaneous utility functions and classes"""</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
 
 <div class="viewcode-block" id="RateLimiter">
 <a class="viewcode-back" href="../../_autosummary/mistral_tools.utils.html#mistral_tools.utils.RateLimiter">[docs]</a>
-<span class="k">class</span> <span class="nc">RateLimiter</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple rate limiter that sleeps for a given amount of time between calls</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RateLimiter</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""A simple rate limiter that sleeps for a given amount of time between calls</span>
 
 <span class="sd">    usage example:</span>
 
@@ -91,29 +92,29 @@
 
 <span class="sd">        for _ in range(10):</span>
 <span class="sd">            with rate_limiter:</span>
-<span class="sd">                print(&quot;doing something, waiting at least 1 second between calls&quot;)</span>
+<span class="sd">                print("doing something, waiting at least 1 second between calls")</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rate_limit</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">last_call_time</span><span class="p">:</span> <span class="nb">float</span><span class="o">|</span><span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_limit</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_limit</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_limit</span> <span class="o">=</span> <span class="n">rate_limit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_call_time</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allows using ``with rate_limiter():`` instead of ``with rate_limiter:``&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Allows using ``with rate_limiter():`` instead of ``with rate_limiter:``"""</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sleeps for the remaining time to reach the rate limit&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Sleeps for the remaining time to reach the rate limit"""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_call_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_call_time</span>
             <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rate_limit</span><span class="p">:</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rate_limit</span> <span class="o">-</span> <span class="n">elapsed</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates the last call time&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Updates the last call time"""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_call_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span></div>
 
 </pre></div>

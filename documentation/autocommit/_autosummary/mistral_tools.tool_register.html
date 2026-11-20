@@ -7,8 +7,8 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>mistral_tools.tool_register &mdash; autocommit 0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -266,17 +266,17 @@ json representation of the command.</p>
 <dd><p>A command register with bound parameters.</p>
 <p>This object behaves like the BoundCommandRegister,
 except bound commands can be accessed with the getitem operator like so:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">commands</span> <span class="o">=</span> <span class="n">CommandRegister</span><span class="p">(</span><span class="n">bindable_parameters</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;df&quot;</span><span class="p">,))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">commands</span> <span class="o">=</span> <span class="n">CommandRegister</span><span class="p">(</span><span class="n">bindable_parameters</span><span class="o">=</span><span class="p">(</span><span class="s2">"df"</span><span class="p">,))</span>
 
 <span class="nd">@commands</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Get payment status of a transaction&quot;</span><span class="p">,</span>
-        <span class="n">parameter_descriptions</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;transaction_id&quot;</span><span class="p">:</span> <span class="s2">&quot;The transaction id.&quot;</span><span class="p">,})</span>
-<span class="k">def</span> <span class="nf">retrieve_payment_status</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="n">transaction_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"Get payment status of a transaction"</span><span class="p">,</span>
+        <span class="n">parameter_descriptions</span><span class="o">=</span><span class="p">{</span><span class="s2">"transaction_id"</span><span class="p">:</span> <span class="s2">"The transaction id."</span><span class="p">,})</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">retrieve_payment_status</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="n">transaction_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="o">...</span>
 
 <span class="n">bound_commands</span> <span class="o">=</span> <span class="n">commands</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
 
-<span class="n">bound_commands</span><span class="p">[</span><span class="s2">&quot;retrieve_payment_status&quot;</span><span class="p">](</span><span class="n">transaction_id</span><span class="o">=</span><span class="s2">&quot;1234&quot;</span><span class="p">)</span>
+<span class="n">bound_commands</span><span class="p">[</span><span class="s2">"retrieve_payment_status"</span><span class="p">](</span><span class="n">transaction_id</span><span class="o">=</span><span class="s2">"1234"</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py method">

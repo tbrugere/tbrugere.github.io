@@ -7,8 +7,8 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Autocommit: automatically write commit messages &mdash; autocommit 0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -79,6 +79,14 @@
              
   <section id="autocommit-automatically-write-commit-messages">
 <h1>Autocommit: automatically write commit messages<a class="headerlink" href="#autocommit-automatically-write-commit-messages" title="Link to this heading"></a></h1>
+<a class="reference external image-reference" href="https://pypi.org/project/git-autocommit-hook/"><img alt="PyPI - Version" src="https://img.shields.io/pypi/v/git_autocommit_hook" />
+</a>
+<a class="reference external image-reference" href="https://github.com/tbrugere/autocommit/actions/workflows/ci_cd.yaml"><img alt="CI/CD status" src="https://github.com/tbrugere/autocommit/actions/workflows/ci_cd.yaml/badge.svg?branch=main" />
+</a>
+<a class="reference external image-reference" href="https://codecov.io/gh/tbrugere/autocommit"><img alt="Coverage percentage" src="https://codecov.io/gh/tbrugere/autocommit/graph/badge.svg?token=REjhBU81RH" />
+</a>
+<a class="reference external image-reference" href="https://tristan.bruge.re/documentation/autocommit/"><img alt="Documentation" src="https://img.shields.io/badge/documentation-green?logo=readme" />
+</a>
 <p>Uses the <a class="reference external" href="https://mistral.ai/">Mistral api</a> to pre-generate a commit message for you.</p>
 <img alt="Autocommit in action" src="_images/autocommit.gif" />
 <section id="features">
@@ -92,13 +100,14 @@
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Link to this heading"></a></h2>
 <p>You can simply install autocommit using pip:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>autocommit
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>git_autocommit_hook
 </pre></div>
 </div>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
-<p>To use autocommit, simply run the following command in the root of your repository:</p>
+<p>To use autocommit, you will need a Mistral API key. You can get one by signing up on the <a class="reference external" href="https://mistral.ai/">Mistral website</a>, and then creating one from <a class="reference external" href="https://console.mistral.ai/api-keys/">the console</a>.</p>
+<p>Then, you can simply run the following command in the root of your repository:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>autocommit<span class="w"> </span>setup<span class="w"> </span>--key-file<span class="w"> </span>&lt;path-to-mistral-api-key&gt;
 </pre></div>
 </div>

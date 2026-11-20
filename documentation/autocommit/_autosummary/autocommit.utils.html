@@ -7,8 +7,8 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>autocommit.utils &mdash; autocommit 0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
@@ -232,15 +232,15 @@ and populates it.</p>
 <span class="c1"># accepts all the arguments of ArgumentParser.</span>
 <span class="c1"># They will be passed to the ArgumentParser constructor</span>
 <span class="c1"># if a new parser is created</span>
-<span class="nd">@create_argument_parser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;This is the description&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">my_argument_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">):</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--my-arg&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;This is the help&quot;</span><span class="p">)</span>
+<span class="nd">@create_argument_parser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"This is the description"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_argument_parser</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">ArgumentParser</span><span class="p">):</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">"--my-arg"</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"This is the help"</span><span class="p">)</span>
 
 <span class="n">specific_parser</span> <span class="o">=</span> <span class="n">my_argument_parser</span><span class="p">()</span>
 <span class="c1"># or</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">()</span>
 <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">()</span>
-<span class="n">my_argument_parser</span><span class="p">(</span><span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;my_subcommand&quot;</span><span class="p">))</span>
+<span class="n">my_argument_parser</span><span class="p">(</span><span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">"my_subcommand"</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="admonition note">

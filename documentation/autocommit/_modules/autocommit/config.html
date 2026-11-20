@@ -6,8 +6,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>autocommit.config &mdash; autocommit 0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
@@ -76,17 +76,17 @@
            <div itemprop="articleBody">
              
   <h1>Source code for autocommit.config</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Configuration for autocommit&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">functools</span> <span class="k">as</span> <span class="nn">ft</span>
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">ConfigDict</span>
+<span></span><span class="sd">"""Configuration for autocommit"""</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">ConfigDict</span>
 
 <div class="viewcode-block" id="Config">
 <a class="viewcode-back" href="../../_autosummary/autocommit.config.html#autocommit.config.Config">[docs]</a>
-<span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configuration for autocommit&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Configuration for autocommit"""</span>
 
     <span class="n">enable_rag</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">enable_function_calls</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
@@ -96,14 +96,14 @@
     <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span>
         <span class="n">ignored_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">ft</span><span class="o">.</span><span class="n">cached_property</span><span class="p">,),</span> 
         <span class="n">protected_namespaces</span> <span class="o">=</span> <span class="p">(),</span> 
-        <span class="n">extra</span> <span class="o">=</span> <span class="s2">&quot;forbid&quot;</span><span class="p">,</span> 
+        <span class="n">extra</span> <span class="o">=</span> <span class="s2">"forbid"</span><span class="p">,</span> 
     <span class="p">)</span>
 
 <div class="viewcode-block" id="Config.from_json_file">
 <a class="viewcode-back" href="../../_autosummary/autocommit.config.html#autocommit.config.Config.from_json_file">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_json_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the configuration from a json file&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_json_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Read the configuration from a json file"""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">):</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_json_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="n">json</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -112,10 +112,10 @@
 
 <div class="viewcode-block" id="Config.to_json_file">
 <a class="viewcode-back" href="../../_autosummary/autocommit.config.html#autocommit.config.Config.to_json_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_json_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the configuration to a json file&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_json_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Write the configuration to a json file"""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_json_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_json_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">())</span></div>
 </div>
@@ -124,16 +124,16 @@
 <div class="viewcode-block" id="AutocommitDir">
 <a class="viewcode-back" href="../../_autosummary/autocommit.config.html#autocommit.config.AutocommitDir">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">AutocommitDir</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads data from the autocommit storage directory&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AutocommitDir</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Loads data from the autocommit storage directory"""</span>
     <span class="n">data_path</span><span class="p">:</span> <span class="n">Path</span>
     <span class="n">logfile</span><span class="p">:</span> <span class="n">Path</span>
     <span class="n">api_key_file</span><span class="p">:</span> <span class="n">Path</span>
     <span class="n">config_file</span><span class="p">:</span> <span class="n">Path</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">Config</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve all paths to absolute paths&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Resolve all paths to absolute paths"""</span>
         <span class="k">for</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">path</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
@@ -141,15 +141,15 @@
 <div class="viewcode-block" id="AutocommitDir.from_dir">
 <a class="viewcode-back" href="../../_autosummary/autocommit.config.html#autocommit.config.AutocommitDir.from_dir">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the autocommit directory&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Load the autocommit directory"""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s2"> does not exist"</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s2"> is not a directory&quot;</span><span class="p">)</span>
-        <span class="n">logfile</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s2">&quot;autocommit.log&quot;</span>
-        <span class="n">api_key_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s2">&quot;api_key&quot;</span>
-        <span class="n">config_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s2">&quot;config.json&quot;</span>
+            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s2"> is not a directory"</span><span class="p">)</span>
+        <span class="n">logfile</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s2">"autocommit.log"</span>
+        <span class="n">api_key_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s2">"api_key"</span>
+        <span class="n">config_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s2">"config.json"</span>
         <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="o">.</span><span class="n">from_json_file</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">logfile</span><span class="p">,</span> <span class="n">api_key_file</span><span class="p">,</span> <span class="n">config_file</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span></div>
 
@@ -157,9 +157,9 @@
 <div class="viewcode-block" id="AutocommitDir.from_repo">
 <a class="viewcode-back" href="../../_autosummary/autocommit.config.html#autocommit.config.AutocommitDir.from_repo">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_repo</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the autocommit directory from the repository&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dir</span><span class="p">(</span><span class="n">repo_path</span> <span class="o">/</span> <span class="s2">&quot;.autocommit_storage_dir&quot;</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_repo</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Load the autocommit directory from the repository"""</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dir</span><span class="p">(</span><span class="n">repo_path</span> <span class="o">/</span> <span class="s2">".autocommit_storage_dir"</span><span class="p">)</span></div>
 </div>
 
 </pre></div>
