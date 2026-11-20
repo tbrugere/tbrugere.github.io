@@ -7,14 +7,14 @@
                         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
  <sitemap>
   <loc>https://tristan.bruge.re/fr/rss.xml</loc>
-  <lastmod>2026-11-20T15:05:00Z</lastmod>
+  <lastmod>2026-11-20T15:16:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://tristan.bruge.re/rss.xml</loc>
-  <lastmod>2026-11-20T15:05:00Z</lastmod>
+  <lastmod>2026-11-20T15:16:00Z</lastmod>
  </sitemap>
  <sitemap>
   <loc>https://tristan.bruge.re/sitemap.xml</loc>
-  <lastmod>2026-11-20T15:05:00Z</lastmod>
+  <lastmod>2026-11-20T15:16:00Z</lastmod>
  </sitemap>
 </sitemapindex>
